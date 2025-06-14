@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/successes/.875e2d1543b7b725637b3c386f3343433d14eb50-audit.json",
+    "files": [
+        {
+            "date": 1749926634376,
+            "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/successes/phu-2025-06-15-00-success.log",
+            "hash": "7bfa6c5ca478e417c74315b1ca7ef7f094cc7091ffac2d307546386d47aadef3"
+        }
+    ],
+    "hashType": "sha256"
+}

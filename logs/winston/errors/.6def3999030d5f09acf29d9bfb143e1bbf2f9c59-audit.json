@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/errors/.6def3999030d5f09acf29d9bfb143e1bbf2f9c59-audit.json",
+    "files": [
+        {
+            "date": 1749926634378,
+            "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/errors/phu-2025-06-15-00-error.log",
+            "hash": "7d6a95ea43c62be66b89ad3c8308c12aac250f4ef90ef74a961c4893ce344247"
+        }
+    ],
+    "hashType": "sha256"
+}

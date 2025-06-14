@@ -1,12 +1,13 @@
 import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
-import config from "../config";
-import ApiError from "../utils/ApiError";
-import handleCastError from "../utils/handleCastError";
-import { IGenericErrorMessage } from "../types";
-import { errorLogger } from "../utils/logger";
-import handleValidationError from "../utils/handleValidationError";
-import handleZodError from "../utils/handleZodError";
+
 import { ZodError } from "zod";
+import config from "../../config";
+import { errorLogger } from "../../utils/logger";
+import { IGenericErrorMessage } from "../../types";
+import handleValidationError from "../../utils/handleValidationError";
+import handleZodError from "../../utils/handleZodError";
+import handleCastError from "../../utils/handleCastError";
+import ApiError from "../../utils/ApiError";
 
 //global error handler
 const globalErrorHandler: ErrorRequestHandler = (
