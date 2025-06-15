@@ -1,5 +1,13 @@
-const taskSearchFields = ['title', 'year', 'code'];
-const taskFiltersFields = ['searchTerm', 'title', 'code', 'year'];
+const taskSearchFields = ['title', 'description'];
+const taskFiltersFields = [
+  'searchTerm',
+  'title',
+  'dueDate',
+  'priority',
+  'status',
+  'assignedTo',
+  'creator',
+];
 
 export const TaskConstant = {
   taskSearchFields,

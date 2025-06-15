@@ -1,21 +1,21 @@
 import { SortOrder } from 'mongoose';
 import { paginationHelpers } from '../../../helpers/paginationHelpers';
 import { IGenericResponse, IPaginationOptions } from '../../../types';
+import { IGroup, IGroupFilters } from './group.interface';
+import { Group } from './group.model';
 import ApiError from '../../../utils/ApiError';
-import { ITask, ITaskFilters } from './task.interface';
-import { Task } from './task.model';
 import httpStatus from 'http-status';
 import { deleteFile } from '../../../utils/deleteFile';
-import { TaskComment } from '../taskComment/task-comment.model';
 
-const createTask = async (payload: ITask): Promise<ITask> => {
-  return await Task.create(payload);
+const createGroup = async (payload: IGroup): Promise<IGroup> => {
+  const result = await Group.create(payload);
+  return result;
 };
 
-const getAllTasks = async (
-  filters: ITaskFilters,
+const getAllGroups = async (
+  filters: IGroupFilters,
   paginationOptions: IPaginationOptions
-): Promise<IGenericResponse<ITask[]>> => {
+): Promise<IGenericResponse<IGroup[]>> => {
   const { searchTerm, ...filtersData } = filters;
   const { page, limit, skip, sortBy, sortOrder } =
     paginationHelpers.calculatePagination(paginationOptions);
@@ -58,12 +58,12 @@ const getAllTasks = async (
   const whereConditions =
     andConditions.length > 0 ? { $and: andConditions } : {};
 
-  const result = await Task.find(whereConditions)
+  const result = await Group.find(whereConditions)
     .sort(sortConditions)
     .skip(skip)
     .limit(limit);
 
-  const total = await Task.countDocuments(whereConditions);
+  const total = await Group.countDocuments(whereConditions);
   return {
     meta: {
       page,
@@ -74,11 +74,10 @@ const getAllTasks = async (
   };
 };
 
-const getAllUserTasks = async (
-  userId: string,
-  filters: ITaskFilters,
+const getAllMyGroups = async (
+  filters: IGroupFilters,
   paginationOptions: IPaginationOptions
-): Promise<IGenericResponse<ITask[]>> => {
+): Promise<IGenericResponse<IGroup[]>> => {
   const { searchTerm, ...filtersData } = filters;
   const { page, limit, skip, sortBy, sortOrder } =
     paginationHelpers.calculatePagination(paginationOptions);
@@ -113,7 +112,7 @@ const getAllUserTasks = async (
   }
 
   andConditions.push({
-    creator: userId,
+    members: { $in: [filtersData.userId] },
   });
 
   const sortConditions: { [key: string]: SortOrder } = {};
@@ -125,12 +124,12 @@ const getAllUserTasks = async (
   const whereConditions =
     andConditions.length > 0 ? { $and: andConditions } : {};
 
-  const result = await Task.find(whereConditions)
+  const result = await Group.find(whereConditions)
     .sort(sortConditions)
     .skip(skip)
     .limit(limit);
 
-  const total = await Task.countDocuments(whereConditions);
+  const total = await Group.countDocuments(whereConditions);
   return {
     meta: {
       page,
@@ -141,46 +140,42 @@ const getAllUserTasks = async (
   };
 };
 
-const getSingleTask = async (id: string): Promise<ITask | null> => {
-  const task = await Task.findById(id);
-  return task;
+const getSingleGroup = async (id: string): Promise<IGroup | null> => {
+  const result = await Group.findById(id);
+  return result;
 };
 
-const updateTask = async (
+const updateGroup = async (
   id: string,
-  payload: Partial<ITask>
-): Promise<ITask | null> => {
-  const findTask = await Task.findById(id);
-  if (!findTask) throw new ApiError(httpStatus.NOT_FOUND, 'Task not found');
-  if (payload.attachment && findTask.attachment) {
-    const deletePrevFile = deleteFile(findTask.attachment.fileUrl);
-    if (!deletePrevFile) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'Attachment not found');
-    }
+  payload: Partial<IGroup>
+): Promise<IGroup | null> => {
+  const findGroup = await Group.findById(id);
+  if (!findGroup) throw new ApiError(httpStatus.NOT_FOUND, 'Group not found');
+  if (payload.image && findGroup.image) {
+    deleteFile(findGroup.image);
   }
-  const task = await Task.findOneAndUpdate({ _id: id }, payload, {
+  const result = await Group.findOneAndUpdate({ _id: id }, payload, {
     new: true,
     runValidators: true,
   });
-  return task;
+  return result;
 };
 
-const deleteTask = async (id: string): Promise<ITask | null> => {
-  const findTask = await Task.findById(id);
-  if (!findTask) throw new ApiError(httpStatus.NOT_FOUND, 'Task not found');
-  const task = await Task.findOneAndDelete({ _id: id });
-  await TaskComment.deleteMany({ task: id });
-  if (findTask.attachment) {
-    deleteFile(findTask.attachment.fileUrl);
+const deleteGroup = async (id: string): Promise<IGroup | null> => {
+  const findGroup = await Group.findById(id);
+  if (!findGroup) throw new ApiError(httpStatus.NOT_FOUND, 'Group not found');
+  const result = await Group.findOneAndDelete({ _id: id });
+  if (findGroup.image) {
+    deleteFile(findGroup.image);
   }
-  return task;
+  return result;
 };
 
-export const TaskService = {
-  createTask,
-  getAllTasks,
-  getAllUserTasks,
-  getSingleTask,
-  updateTask,
-  deleteTask,
+export const GroupService = {
+  createGroup,
+  getAllGroups,
+  getAllMyGroups,
+  getSingleGroup,
+  updateGroup,
+  deleteGroup,
 };
