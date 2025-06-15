@@ -9,7 +9,7 @@ export type IUser = {
   status: boolean;
   passwordChangeAt?: Date;
   profileImage?: string;
-  password?: string;
+  password: string;
   createdAt?: Date;
   updatedAt?: Date;
 };
