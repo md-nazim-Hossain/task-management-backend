@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { ENUM_USER_ROLE } from "../../../types/enum";
+import { z } from 'zod';
+import { ENUM_USER_ROLE } from '../../../types/enum';
 
 const createUserZodSchema = z.object({
   body: z.object({

@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import { IGenericErrorMessage, IGenericErrorResponse } from "../types";
+import mongoose from 'mongoose';
+import { IGenericErrorMessage, IGenericErrorResponse } from '../types';
 
 const handleValidationError = (
   error: mongoose.Error.ValidationError
@@ -15,7 +15,7 @@ const handleValidationError = (
 
   return {
     statusCode: 400,
-    message: "Validation Error",
+    message: 'Validation Error',
     errorMessages: errors,
   };
 };

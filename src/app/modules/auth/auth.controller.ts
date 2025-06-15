@@ -1,10 +1,10 @@
-import httpStatus from "http-status";
-import { Request, Response } from "express";
-import { ILoginUserResponse, IRefreshTokenResponse } from "./auth.interface";
-import config from "../../../config";
-import { catchAsync } from "../../../utils/catchAsync";
-import sendResponse from "../../../utils/ApiResponse";
-import { AuthService } from "./auth.service";
+import httpStatus from 'http-status';
+import { Request, Response } from 'express';
+import { ILoginUserResponse, IRefreshTokenResponse } from './auth.interface';
+import config from '../../../config';
+import { catchAsync } from '../../../utils/catchAsync';
+import sendResponse from '../../../utils/ApiResponse';
+import { AuthService } from './auth.service';
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {
   const { ...loginData } = req.body;
@@ -12,14 +12,14 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
   const { refreshToken, ...others } = result;
 
   //set refresh token into cookie
-  res.cookie("refreshToken", refreshToken, {
-    secure: config.env === "production",
+  res.cookie('refreshToken', refreshToken, {
+    secure: config.env === 'production',
     httpOnly: true,
   });
 
   sendResponse<ILoginUserResponse>(res, {
     success: true,
-    message: "User login successfully",
+    message: 'User login successfully',
     data: others,
     statusCode: httpStatus.OK,
   });
@@ -31,7 +31,7 @@ const refreshToken = catchAsync(async (req: Request, res: Response) => {
 
   sendResponse<IRefreshTokenResponse>(res, {
     success: true,
-    message: "Get Access Token successfully",
+    message: 'Get Access Token successfully',
     data: result,
     statusCode: httpStatus.OK,
   });
@@ -44,7 +44,7 @@ const changePassword = catchAsync(async (req: Request, res: Response) => {
 
   sendResponse(res, {
     success: true,
-    message: "Password changed successfully",
+    message: 'Password changed successfully',
     data: null,
     statusCode: httpStatus.OK,
   });

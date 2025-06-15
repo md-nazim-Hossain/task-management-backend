@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { Model } from "mongoose";
+import { Model } from 'mongoose';
 
 export type IUser = {
   _id: string;
@@ -23,7 +23,7 @@ export type IUserMethods = {
     email: string
   ) => Promise<Pick<
     IUser,
-    "email" | "password" | "status" | "role" | "_id"
+    'email' | 'password' | 'status' | 'role' | '_id'
   > | null>;
 };
 export type UserModel = Model<IUser, Record<string, unknown>, IUserMethods>;
