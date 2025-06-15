@@ -14,7 +14,7 @@ router.post(
   UserController.createdUser
 );
 
-router.get("/my-profile", auth(USER), UserController.getMyProfile);
+router.get("/my-profile", auth(), UserController.getMyProfile);
 
 router.get("/", auth(ADMIN, USER, SUPER_ADMIN), UserController.getAllUsers);
 
