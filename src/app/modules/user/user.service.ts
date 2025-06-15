@@ -8,7 +8,7 @@ const createUser = async (payload: IUser): Promise<IUser> => {
   const user = new User();
   const isUserExist = await user.isUserExist(payload.email);
   if (isUserExist) {
-    throw new Error("User already exist");
+    throw new ApiError(httpStatus.BAD_REQUEST, "User already exist");
   }
   const result = await User.create(payload);
   if (!result)

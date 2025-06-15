@@ -11,7 +11,6 @@ const router = express.Router();
 router.post(
   "/create-user",
   validateRequest(UserValidation.createUserZodSchema),
-  auth(ADMIN, USER, SUPER_ADMIN),
   UserController.createdUser
 );
 

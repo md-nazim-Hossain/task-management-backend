@@ -17,6 +17,7 @@ const userSchema = new Schema<IUser, Record<string, unknown>, IUserMethods>(
     role: {
       type: String,
       required: [true, "role is required"],
+      default: "user",
     },
     password: {
       type: String,

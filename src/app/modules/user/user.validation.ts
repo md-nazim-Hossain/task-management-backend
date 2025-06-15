@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { ENUM_USER_ROLE } from "../../../types/enum";
 
-// req-validation
 const createUserZodSchema = z.object({
   body: z.object({
     password: z.string().optional(),
@@ -12,6 +11,7 @@ const createUserZodSchema = z.object({
       .optional()
       .default(ENUM_USER_ROLE.USER),
     status: z.boolean().optional().default(true),
+    profileImage: z.string().optional(),
   }),
 });
 
