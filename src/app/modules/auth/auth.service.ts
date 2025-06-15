@@ -13,9 +13,9 @@ import ApiError from "../../../utils/ApiError";
 import { User } from "../user/user.model";
 
 const loginUser = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
-  const { id, password } = payload;
+  const { email, password } = payload;
   const user = new User();
-  const isUserExit = await user.isUserExist(id);
+  const isUserExit = await user.isUserExist(email);
 
   if (!isUserExit) {
     throw new ApiError(httpStatus.NOT_FOUND, "User does not exist");

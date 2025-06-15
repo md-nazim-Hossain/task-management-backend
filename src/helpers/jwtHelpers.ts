@@ -1,15 +1,17 @@
 import jwt, { Secret, SignOptions } from "jsonwebtoken";
 import { ICreateToken } from "../types";
+import mongoose from "mongoose";
 
 const createToken = (
-  payload: Pick<ICreateToken, "id" | "role">,
+  payload: Pick<ICreateToken, "email" | "role" | "_id">,
   secret: Secret,
   expiredTime: number = 1000 * 60 * 60 * 24 // default
 ): string => {
   return jwt.sign(
     {
-      userId: payload.id,
+      userId: new mongoose.Types.ObjectId(payload._id).toString(),
       role: payload.role,
+      email: payload.email,
     },
     secret,
     {

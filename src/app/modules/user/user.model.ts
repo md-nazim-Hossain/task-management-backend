@@ -26,7 +26,7 @@ const userSchema = new Schema<IUser, Record<string, unknown>, IUserMethods>(
     },
     status: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     passwordChangeAt: {
       type: Date,
@@ -48,11 +48,11 @@ userSchema.methods.isUserExist = async function (
   email: string
 ): Promise<Pick<
   IUser,
-  "id" | "password" | "status" | "role" | "email"
+  "_id" | "password" | "status" | "role" | "email"
 > | null> {
   const user = await User.findOne(
     { email },
-    { status: 1, id: 1, password: 1, role: 1, email: 1 }
+    { status: 1, _id: 1, password: 1, role: 1, email: 1 }
   ).lean();
 
   return user;

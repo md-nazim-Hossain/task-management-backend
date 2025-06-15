@@ -1,6 +1,5 @@
 import { IUser } from "./user.interface";
 import { User } from "./user.model";
-import { catchAsync } from "../../../utils/catchAsync";
 import ApiError from "../../../utils/ApiError";
 import httpStatus from "http-status";
 
@@ -13,7 +12,8 @@ const createUser = async (payload: IUser): Promise<IUser> => {
   const result = await User.create(payload);
   if (!result)
     throw new ApiError(httpStatus.BAD_REQUEST, "Failed to create user");
-  return result;
+  const { password, ...userWithoutPassword } = result.toObject();
+  return userWithoutPassword;
 };
 
 const getAllUsers = async (): Promise<IUser[]> => {
@@ -33,14 +33,17 @@ const updateUser = async (
 ): Promise<IUser | null> => {
   const findUser = await User.findById(id);
   if (!findUser) throw new ApiError(httpStatus.NOT_FOUND, "User not found");
-  const result = await User.findOneAndUpdate({ id }, payload, {
+
+  const result = await User.findOneAndUpdate({ _id: id }, payload, {
     new: true,
+    runValidators: true,
   });
+
   return result;
 };
 
 const deleteUser = async (id: string): Promise<IUser | null> => {
-  const result = await User.findOneAndDelete({ id });
+  const result = await User.findOneAndDelete({ _id: id });
   return result;
 };
 

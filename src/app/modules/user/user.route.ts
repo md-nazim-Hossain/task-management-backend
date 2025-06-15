@@ -26,11 +26,11 @@ router.get(
 
 router.patch(
   "/:id",
-  validateRequest(UserValidation.createUserZodSchema),
-  auth(ADMIN, USER, SUPER_ADMIN),
+  validateRequest(UserValidation.updateUserZodSchema),
+  auth(),
   UserController.updateUser
 );
 
-router.delete("/:id", auth(ADMIN, SUPER_ADMIN), UserController.deleteUser);
+router.delete("/:id", auth(), UserController.deleteUser);
 
 export const UserRoutes = router;

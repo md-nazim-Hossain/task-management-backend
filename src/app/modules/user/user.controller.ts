@@ -17,8 +17,9 @@ const createdUser = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getMyProfile = catchAsync(async (req: Request, res: Response) => {
-  const user = (req as Request & { user: { id: string; role: string } }).user;
-  const result = await UserService.getSingleUser(user.id);
+  const user = (req as Request & { user: { userId: string; role: string } })
+    .user;
+  const result = await UserService.getSingleUser(user.userId);
   sendResponse<IUser>(res, {
     success: true,
     message: "User retrieved successfully",

@@ -2,14 +2,14 @@
 import { Model } from "mongoose";
 
 export type IUser = {
-  id: string;
+  _id: string;
   fullName: string;
   email: string;
   role: string;
   status: boolean;
   passwordChangeAt?: Date;
   profileImage?: string;
-  password: string;
+  password?: string;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -20,7 +20,10 @@ export type IUserMethods = {
     savePassword: string
   ) => Promise<boolean>;
   isUserExist: (
-    id: string
-  ) => Promise<Pick<IUser, "id" | "password" | "status" | "role"> | null>;
+    email: string
+  ) => Promise<Pick<
+    IUser,
+    "email" | "password" | "status" | "role" | "_id"
+  > | null>;
 };
 export type UserModel = Model<IUser, Record<string, unknown>, IUserMethods>;
