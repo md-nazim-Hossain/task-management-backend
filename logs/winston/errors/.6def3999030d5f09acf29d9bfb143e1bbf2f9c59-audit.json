@@ -9,6 +9,11 @@
             "date": 1749926634378,
             "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/errors/phu-2025-06-15-00-error.log",
             "hash": "7d6a95ea43c62be66b89ad3c8308c12aac250f4ef90ef74a961c4893ce344247"
+        },
+        {
+            "date": 1749994530695,
+            "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/errors/phu-2025-06-15-19-error.log",
+            "hash": "7332f774f999dc414ce1c3f4c890947d5814017c3a3a8e7c14ff878045397933"
         }
     ],
     "hashType": "sha256"
