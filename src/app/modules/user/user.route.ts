@@ -1,21 +1,37 @@
 import express from "express";
+import { UserController } from "./user.controller";
 import { ENUM_USER_ROLE } from "../../../types/enum";
+import validateRequest from "../../middlewares/validateRequest";
 import auth from "../../middlewares/auth.middleware";
-import { Request, Response } from "express";
-
-const { ADMIN, FACULTY, SUPER_ADMIN } = ENUM_USER_ROLE;
+import { UserValidation } from "./user.validation";
+const { ADMIN, USER, SUPER_ADMIN } = ENUM_USER_ROLE;
 
 const router = express.Router();
 
-router.get(
-  "/me",
-  auth(ADMIN, FACULTY, SUPER_ADMIN),
-  async (req: Request, res: Response) => {
-    const user = (req as Request & { user: { id: string; role: string } }).user;
-
-    console.log(user.id, user.role); // ✅ Safe to access
-    res.send({ user });
-  }
+router.post(
+  "/create-user",
+  validateRequest(UserValidation.createUserZodSchema),
+  auth(ADMIN, USER, SUPER_ADMIN),
+  UserController.createdUser
 );
+
+router.get("/my-profile", auth(USER), UserController.getMyProfile);
+
+router.get("/", auth(ADMIN, USER, SUPER_ADMIN), UserController.getAllUsers);
+
+router.get(
+  "/:id",
+  auth(ADMIN, USER, SUPER_ADMIN),
+  UserController.getSingleUser
+);
+
+router.patch(
+  "/:id",
+  validateRequest(UserValidation.createUserZodSchema),
+  auth(ADMIN, USER, SUPER_ADMIN),
+  UserController.updateUser
+);
+
+router.delete("/:id", auth(ADMIN, SUPER_ADMIN), UserController.deleteUser);
 
 export const UserRoutes = router;

@@ -8,6 +8,7 @@ export type IUser = {
   role: string;
   status: boolean;
   passwordChangeAt?: Date;
+  profileImage?: string;
   password: string;
   createdAt?: Date;
   updatedAt?: Date;

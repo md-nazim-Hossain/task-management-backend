@@ -30,6 +30,10 @@ const userSchema = new Schema<IUser, Record<string, unknown>, IUserMethods>(
     passwordChangeAt: {
       type: Date,
     },
+    profileImage: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,
