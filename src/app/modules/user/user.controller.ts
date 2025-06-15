@@ -1,16 +1,16 @@
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
 
-import httpStatus from "http-status";
-import { IUser } from "./user.interface";
-import { catchAsync } from "../../../utils/catchAsync";
-import { UserService } from "./user.service";
-import sendResponse from "../../../utils/ApiResponse";
+import httpStatus from 'http-status';
+import { IUser } from './user.interface';
+import { catchAsync } from '../../../utils/catchAsync';
+import { UserService } from './user.service';
+import sendResponse from '../../../utils/ApiResponse';
 
 const createdUser = catchAsync(async (req: Request, res: Response) => {
   const result = await UserService.createUser(req.body);
   sendResponse<IUser>(res, {
     success: true,
-    message: "User created successfully",
+    message: 'User created successfully',
     data: result,
     statusCode: httpStatus.OK,
   });
@@ -22,17 +22,18 @@ const getMyProfile = catchAsync(async (req: Request, res: Response) => {
   const result = await UserService.getSingleUser(user.userId);
   sendResponse<IUser>(res, {
     success: true,
-    message: "User retrieved successfully",
+    message: 'User retrieved successfully',
     data: result,
     statusCode: httpStatus.OK,
   });
 });
 
+// eslint-disable-next-line no-unused-vars
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
   const result = await UserService.getAllUsers();
   sendResponse<IUser[]>(res, {
     success: true,
-    message: "Users retrieved successfully",
+    message: 'Users retrieved successfully',
     data: result,
     statusCode: httpStatus.OK,
   });
@@ -43,7 +44,7 @@ const getSingleUser = catchAsync(async (req: Request, res: Response) => {
   const result = await UserService.getSingleUser(id);
   sendResponse<IUser>(res, {
     success: true,
-    message: "User retrieved successfully",
+    message: 'User retrieved successfully',
     data: result,
     statusCode: httpStatus.OK,
   });
@@ -54,7 +55,7 @@ const updateUser = catchAsync(async (req: Request, res: Response) => {
   const result = await UserService.updateUser(id, req.body);
   sendResponse<IUser>(res, {
     success: true,
-    message: "User updated successfully",
+    message: 'User updated successfully',
     data: result,
     statusCode: httpStatus.OK,
   });
@@ -65,7 +66,7 @@ const deleteUser = catchAsync(async (req: Request, res: Response) => {
   const result = await UserService.deleteUser(id);
   sendResponse<IUser>(res, {
     success: true,
-    message: "User deleted successfully",
+    message: 'User deleted successfully',
     data: result,
     statusCode: httpStatus.OK,
   });

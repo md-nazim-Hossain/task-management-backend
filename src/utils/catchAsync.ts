@@ -1,12 +1,18 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from 'express';
+
+type ICallback<T = Request> = (
+  req: T,
+  res: Response,
+  next: NextFunction
+) => Promise<void>;
 
 const catchAsync =
-  (fn: Function) => async (req: Request, res: Response, next: NextFunction) => {
+  <T = Request>(fn: ICallback<T>) =>
+  async (req: T, res: Response, next: NextFunction): Promise<void> => {
     try {
-      return await fn(req, res, next);
+      await fn(req, res, next);
     } catch (error) {
       next(error);
     }
   };
-
 export { catchAsync };

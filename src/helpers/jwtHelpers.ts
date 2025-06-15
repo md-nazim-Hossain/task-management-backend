@@ -1,9 +1,9 @@
-import jwt, { Secret, SignOptions } from "jsonwebtoken";
-import { ICreateToken } from "../types";
-import mongoose from "mongoose";
+import jwt, { Secret, SignOptions } from 'jsonwebtoken';
+import { ICreateToken } from '../types';
+import mongoose from 'mongoose';
 
 const createToken = (
-  payload: Pick<ICreateToken, "email" | "role" | "_id">,
+  payload: Pick<ICreateToken, 'email' | 'role' | '_id'>,
   secret: Secret,
   expiredTime: number = 1000 * 60 * 60 * 24 // default
 ): string => {

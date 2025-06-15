@@ -1,18 +1,19 @@
-import { IUser } from "./user.interface";
-import { User } from "./user.model";
-import ApiError from "../../../utils/ApiError";
-import httpStatus from "http-status";
+import { IUser } from './user.interface';
+import { User } from './user.model';
+import ApiError from '../../../utils/ApiError';
+import httpStatus from 'http-status';
 
 const createUser = async (payload: IUser): Promise<IUser> => {
   const user = new User();
   const isUserExist = await user.isUserExist(payload.email);
   if (isUserExist) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "User already exist");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'User already exist');
   }
   const result = await User.create(payload);
   if (!result)
-    throw new ApiError(httpStatus.BAD_REQUEST, "Failed to create user");
-  const { password, ...userWithoutPassword } = result.toObject();
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Failed to create user');
+  const userWithoutPassword = result.toObject();
+  delete userWithoutPassword.password;
   return userWithoutPassword;
 };
 
@@ -23,7 +24,7 @@ const getAllUsers = async (): Promise<IUser[]> => {
 
 const getSingleUser = async (id: string): Promise<IUser | null> => {
   const result = await User.findById(id);
-  if (!result) throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  if (!result) throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   return result;
 };
 
@@ -32,7 +33,7 @@ const updateUser = async (
   payload: Partial<IUser>
 ): Promise<IUser | null> => {
   const findUser = await User.findById(id);
-  if (!findUser) throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  if (!findUser) throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
 
   const result = await User.findOneAndUpdate({ _id: id }, payload, {
     new: true,

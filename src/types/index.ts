@@ -1,6 +1,4 @@
-import { SortOrder } from "mongoose";
-import { Request } from "express";
-import { JwtPayload } from "jsonwebtoken";
+import { SortOrder } from 'mongoose';
 
 export type IGenericErrorMessage = {
   path: string;
