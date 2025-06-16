@@ -7,6 +7,10 @@ export type ITaskComment = {
   task: Types.ObjectId | ITask;
   author: Types.ObjectId | IUser;
   comment: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  isEdited: boolean;
+  parentComment?: Types.ObjectId | ITaskComment;
+  replies?: Array<Types.ObjectId | ITaskComment>;
+  lastEditedAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
 };

@@ -4,13 +4,14 @@ import { catchAsync } from '../../../utils/catchAsync';
 import { ITaskComment } from './task-comment.interface';
 import sendResponse from '../../../utils/ApiResponse';
 import httpStatus from 'http-status';
+import mongoose from 'mongoose';
 
 const createTaskComment = catchAsync(async (req: Request, res: Response) => {
   const user = (req as Request & { user: { userId: string; role: string } })
     .user;
   const result = await TaskCommentService.createTaskComment({
     ...req.body,
-    author: user.userId,
+    author: new mongoose.Types.ObjectId(user.userId),
   });
   sendResponse<ITaskComment>(res, {
     success: true,

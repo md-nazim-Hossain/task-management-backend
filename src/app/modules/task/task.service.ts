@@ -142,7 +142,7 @@ const getAllUserTasks = async (
 };
 
 const getSingleTask = async (id: string): Promise<ITask | null> => {
-  const task = await Task.findById(id);
+  const task = await Task.findById(id).populate('taskComments');
   return task;
 };
 
@@ -166,13 +166,15 @@ const updateTask = async (
 };
 
 const deleteTask = async (id: string): Promise<ITask | null> => {
-  const findTask = await Task.findById(id);
-  if (!findTask) throw new ApiError(httpStatus.NOT_FOUND, 'Task not found');
-  const task = await Task.findOneAndDelete({ _id: id });
-  await TaskComment.deleteMany({ task: id });
-  if (findTask.attachment) {
-    deleteFile(findTask.attachment.fileUrl);
+  const [task] = await Promise.all([
+    Task.findOneAndDelete({ _id: id }),
+    TaskComment.deleteMany({ task: id }),
+  ]);
+
+  if (task?.attachment?.fileUrl) {
+    deleteFile(task.attachment.fileUrl);
   }
+
   return task;
 };
 

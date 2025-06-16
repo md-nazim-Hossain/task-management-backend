@@ -30,7 +30,7 @@ const taskSchema = new Schema<ITask, Record<string, unknown>>(
     },
     assignedTo: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: 'Group',
     },
     priority: {
       type: String,
@@ -60,5 +60,11 @@ const taskSchema = new Schema<ITask, Record<string, unknown>>(
     },
   }
 );
+
+taskSchema.virtual('taskComments', {
+  ref: 'TaskComment',
+  localField: '_id',
+  foreignField: 'task',
+});
 
 export const Task = model<ITask>('Task', taskSchema);

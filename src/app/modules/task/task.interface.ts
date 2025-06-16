@@ -1,14 +1,16 @@
 import { Types } from 'mongoose';
 import { ENUM_TASK_PRIORITY, ENUM_TASK_STATUS } from '../../../types/enum';
+import { IUser } from '../user/user.interface';
+import { IGroup } from '../group/group.interface';
 
 export type ITask = {
   _id?: string;
   title: string;
   description: string;
   status?: ENUM_TASK_STATUS;
-  creator: Types.ObjectId | string;
+  creator: Types.ObjectId | IUser;
   dueDate: Date;
-  assignedTo?: Types.ObjectId | string;
+  assignedTo?: Types.ObjectId | IGroup;
   category: Types.ObjectId | string;
   priority?: ENUM_TASK_PRIORITY;
   attachment?: ITaskAttachment;

@@ -17,6 +17,25 @@ const taskCommentSchema = new Schema<ITaskComment>(
       type: String,
       required: true,
     },
+    isEdited: {
+      type: Boolean,
+      default: false,
+    },
+    parentComment: {
+      type: Schema.Types.ObjectId,
+      ref: 'Comment',
+      default: null,
+    },
+    replies: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Comment',
+      },
+    ],
+    lastEditedAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
@@ -28,6 +47,18 @@ const taskCommentSchema = new Schema<ITaskComment>(
     },
   }
 );
+
+taskCommentSchema.pre('find', function (next) {
+  this.populate({
+    path: 'replies',
+    options: { sort: { createdAt: -1 } },
+    populate: {
+      path: 'author',
+      select: '-password',
+    },
+  });
+  next();
+});
 
 export const TaskComment = model<ITaskComment>(
   'TaskComment',
