@@ -16,7 +16,6 @@ const taskSchema = new Schema<ITask, Record<string, unknown>>(
       type: String,
       enum: Object.values(ENUM_TASK_STATUS),
       default: ENUM_TASK_STATUS.TODO,
-      index: true,
     },
     creator: {
       type: Schema.Types.ObjectId,
@@ -24,9 +23,8 @@ const taskSchema = new Schema<ITask, Record<string, unknown>>(
       required: true,
     },
     dueDate: {
-      type: Date,
+      type: String,
       required: true,
-      index: true,
     },
     assignedTo: {
       type: Schema.Types.ObjectId,
@@ -65,6 +63,10 @@ taskSchema.virtual('taskComments', {
   ref: 'TaskComment',
   localField: '_id',
   foreignField: 'task',
+});
+
+taskSchema.pre('find', function () {
+  this.populate('creator', '+email +fullName +profileImage +_id');
 });
 
 export const Task = model<ITask>('Task', taskSchema);

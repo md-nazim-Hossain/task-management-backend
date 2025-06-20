@@ -1,20 +1,91 @@
 import ApiError from '../../../utils/ApiError';
+import { generateUniqueSlug } from '../../../utils/slug-generator';
 import { ICategory } from './category.interface';
 import { Category } from './category.model';
 import httpStatus from 'http-status';
 
 const createCategory = async (payload: ICategory): Promise<ICategory> => {
+  const slug = await generateUniqueSlug(payload.title, Category);
+  payload.slug = slug;
   const result = await Category.create(payload);
   return result;
 };
 
-const getAllCategories = async (): Promise<ICategory[]> => {
-  const result = await Category.find();
+const getAllCategories = async (): Promise<any[]> => {
+  const result = await Category.aggregate([
+    {
+      $lookup: {
+        from: 'tasks',
+        localField: '_id',
+        foreignField: 'category',
+        as: 'tasks',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'creator',
+              foreignField: '_id',
+              as: 'creator',
+              pipeline: [
+                {
+                  $project: {
+                    email: 1,
+                    fullName: 1,
+                    profileImage: 1,
+                    _id: 1,
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $unwind: {
+              path: '$creator',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'creator',
+        foreignField: '_id',
+        as: 'creator',
+        pipeline: [
+          {
+            $project: {
+              email: 1,
+              fullName: 1,
+              profileImage: 1,
+              _id: 1,
+            },
+          },
+        ],
+      },
+    },
+
+    {
+      $project: {
+        title: 1,
+        slug: 1,
+        status: 1,
+        createdAt: 1,
+        creator: 1,
+        tasks: 1,
+      },
+    },
+  ]);
+
   return result;
 };
 
 const getSingleCategory = async (id: string): Promise<ICategory | null> => {
-  const result = await Category.findById(id);
+  const result = await Category.findById(id).populate(
+    'creator',
+    '+email +fullName +profileImage +_id'
+  );
   if (!result) throw new ApiError(httpStatus.NOT_FOUND, 'Category not found');
   return result;
 };

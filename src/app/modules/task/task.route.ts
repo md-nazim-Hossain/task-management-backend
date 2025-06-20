@@ -8,7 +8,7 @@ import { upload } from '../../middlewares/multer.middleware';
 const router = express.Router();
 
 router.post(
-  '/create-tasks',
+  '/create-task',
   validateRequest(TaskValidation.createTaskZodSchema),
   auth(),
   upload.single('attachment'),

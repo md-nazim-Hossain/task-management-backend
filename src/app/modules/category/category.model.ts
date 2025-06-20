@@ -1,11 +1,18 @@
 import { model, Schema } from 'mongoose';
 import { ICategory } from './category.interface';
+import { generateUniqueSlug } from '../../../utils/slug-generator';
 
 const categorySchema = new Schema<ICategory, Record<string, unknown>>(
   {
     title: {
       type: String,
       required: true,
+      index: true,
+    },
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
       index: true,
     },
     creator: {

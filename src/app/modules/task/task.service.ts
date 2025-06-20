@@ -1,4 +1,4 @@
-import { SortOrder } from 'mongoose';
+import mongoose, { SortOrder } from 'mongoose';
 import { paginationHelpers } from '../../../helpers/paginationHelpers';
 import { IGenericResponse, IPaginationOptions } from '../../../types';
 import ApiError from '../../../utils/ApiError';
@@ -9,7 +9,14 @@ import { deleteFile } from '../../../utils/deleteFile';
 import { TaskComment } from '../taskComment/task-comment.model';
 
 const createTask = async (payload: ITask): Promise<ITask> => {
-  return await Task.create(payload);
+  if (
+    !payload.assignedTo ||
+    !mongoose.Types.ObjectId.isValid(payload.assignedTo as any)
+  ) {
+    delete payload.assignedTo; // or set it to null
+  }
+  const result = await Task.create(payload);
+  return result;
 };
 
 const getAllTasks = async (

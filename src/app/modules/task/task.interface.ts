@@ -9,8 +9,8 @@ export type ITask = {
   description: string;
   status?: ENUM_TASK_STATUS;
   creator: Types.ObjectId | IUser;
-  dueDate: Date;
-  assignedTo?: Types.ObjectId | IGroup;
+  dueDate: string;
+  assignedTo?: Types.ObjectId | IGroup | string;
   category: Types.ObjectId | string;
   priority?: ENUM_TASK_PRIORITY;
   attachment?: ITaskAttachment;

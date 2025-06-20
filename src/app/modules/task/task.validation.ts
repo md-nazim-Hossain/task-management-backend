@@ -12,7 +12,7 @@ const createTaskZodSchema = z.object({
     status: z
       .enum(Object.values(ENUM_TASK_STATUS) as [string, ...string[]])
       .default(ENUM_TASK_STATUS.TODO),
-    dueDate: z.date({
+    dueDate: z.string({
       required_error: 'Due date is required',
     }),
     assignedTo: z

@@ -86,7 +86,7 @@ const refreshToken = async (token: string): Promise<IRefreshTokenResponse> => {
 const changePassword = async (
   user: JwtPayload,
   payload: IChangePassword
-): Promise<void> => {
+): Promise<boolean> => {
   const { oldPassword, newPassword } = payload;
   const userModel = new User();
   const isUserExist = await userModel.isUserExist(user.userId);
@@ -112,6 +112,8 @@ const changePassword = async (
   };
 
   await User.findOneAndUpdate({ id: user.userId }, updatedData);
+
+  return true;
 };
 
 export const AuthService = {
