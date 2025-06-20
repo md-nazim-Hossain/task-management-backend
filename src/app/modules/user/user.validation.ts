@@ -10,20 +10,18 @@ const createUserZodSchema = z.object({
       .enum(Object.values(ENUM_USER_ROLE) as [string, ...string[]])
       .default(ENUM_USER_ROLE.USER),
     status: z.boolean().optional().default(true),
-    profileImage: z.string().optional(),
+    profileImage: z.any().optional(),
   }),
 });
 
 const updateUserZodSchema = z.object({
-  body: z.object({
-    fullName: z.string().optional(),
-    role: z
-      .enum(Object.values(ENUM_USER_ROLE) as [string, ...string[]])
-      .optional()
-      .default(ENUM_USER_ROLE.USER),
-    status: z.boolean().optional(),
-    profileImage: z.string().optional(),
-  }),
+  fullName: z.string().optional(),
+  role: z
+    .enum(Object.values(ENUM_USER_ROLE) as [string, ...string[]])
+    .optional()
+    .default(ENUM_USER_ROLE.USER),
+  status: z.boolean().optional(),
+  profileImage: z.any().optional(),
 });
 export const UserValidation = {
   createUserZodSchema,

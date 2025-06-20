@@ -41,9 +41,9 @@ const getAllTaskComments = async (taskId: string): Promise<ITaskComment[]> => {
     $or: [{ task: new mongoose.Types.ObjectId(taskId) }],
   };
   const comments = await TaskComment.find(query)
-    .sort({ createdAt: -1 })
+    .sort({ createdAt: 1 })
     .populate('author', '-password')
-    .populate({ path: 'replies', options: { sort: { createdAt: -1 } } })
+    .populate({ path: 'replies', options: { sort: { createdAt: 1 } } })
     .lean();
   return comments;
 };

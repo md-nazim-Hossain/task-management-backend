@@ -64,6 +64,21 @@
             "date": 1750424622247,
             "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/successes/phu-2025-06-20-19-success.log",
             "hash": "51a408331e6ebb1b153393c82e82a5e3061c8e119b7cbb087fc770850b7916c5"
+        },
+        {
+            "date": 1750428840749,
+            "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/successes/phu-2025-06-20-20-success.log",
+            "hash": "30aa91a3c6e38b2361e7ced915756e41d8a05f01b25f295ce2c5135e102b92bc"
+        },
+        {
+            "date": 1750432168185,
+            "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/successes/phu-2025-06-20-21-success.log",
+            "hash": "32c25ca7ed2e3ee7a79e20b0bbe10bb2a6eb8004013893185e5ef63e088b4a79"
+        },
+        {
+            "date": 1750435499628,
+            "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/successes/phu-2025-06-20-22-success.log",
+            "hash": "cfd7598e964211af7a845722fb22dcfb29351aa72f9323c709d7ca7a8e585283"
         }
     ],
     "hashType": "sha256"

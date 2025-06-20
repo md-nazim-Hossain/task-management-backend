@@ -23,13 +23,13 @@ const taskCommentSchema = new Schema<ITaskComment>(
     },
     parentComment: {
       type: Schema.Types.ObjectId,
-      ref: 'Comment',
+      ref: 'TaskComment',
       default: null,
     },
     replies: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'Comment',
+        ref: 'TaskComment',
       },
     ],
     lastEditedAt: {

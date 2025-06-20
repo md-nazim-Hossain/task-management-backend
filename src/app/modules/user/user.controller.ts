@@ -7,7 +7,11 @@ import { UserService } from './user.service';
 import sendResponse from '../../../utils/ApiResponse';
 
 const createdUser = catchAsync(async (req: Request, res: Response) => {
-  const result = await UserService.createUser(req.body);
+  const file = req.file;
+  const image = file ? `/uploads/${file.filename}` : undefined;
+  const { ...payload } = req.body;
+  payload.profileImage = image;
+  const result = await UserService.createUser(payload);
   sendResponse<Omit<IUser, 'password'>>(res, {
     success: true,
     message: 'User created successfully',
@@ -52,7 +56,11 @@ const getSingleUser = catchAsync(async (req: Request, res: Response) => {
 
 const updateUser = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await UserService.updateUser(id, req.body);
+  const file = req.file;
+  const image = file ? `/uploads/${file.filename}` : undefined;
+  const { ...payload } = req.body;
+  payload.profileImage = image;
+  const result = await UserService.updateUser(id, payload);
   sendResponse<IUser>(res, {
     success: true,
     message: 'User updated successfully',

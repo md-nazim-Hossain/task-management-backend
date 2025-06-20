@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.post(
   '/create-group',
-  validateRequest(GroupValidation.createGroupZodSchema),
+  // validateRequest(GroupValidation.createGroupZodSchema),
   auth(),
   upload.single('image'),
   GroupController.createGroup
@@ -20,7 +20,7 @@ router.get('/', auth(), GroupController.getAllGroups);
 router.get('/:id', auth(), GroupController.getSingleGroup);
 router.patch(
   '/:id',
-  validateRequest(GroupValidation.updateGroupZodSchema),
+  // validateRequest(GroupValidation.updateGroupZodSchema),
   auth(),
   upload.single('image'),
   GroupController.updateGroup

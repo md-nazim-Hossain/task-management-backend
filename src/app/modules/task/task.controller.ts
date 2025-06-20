@@ -18,6 +18,7 @@ const createTask = catchAsync(async (req: Request, res: Response) => {
         fileName: file.originalname,
         fileUrl: `/uploads/${file.filename}`,
         mimeType: file.mimetype,
+        size: file.size,
       }
     : undefined;
 
@@ -91,6 +92,7 @@ const updateTask = catchAsync(async (req: Request, res: Response) => {
         fileName: file.originalname,
         fileUrl: `/uploads/${file.filename}`,
         mimeType: file.mimetype,
+        size: file.size,
       }
     : undefined;
 

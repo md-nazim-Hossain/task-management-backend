@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.post(
   '/create-user',
-  validateRequest(UserValidation.createUserZodSchema),
+  // validateRequest(UserValidation.createUserZodSchema),
   upload.single('profileImage'),
   UserController.createdUser
 );

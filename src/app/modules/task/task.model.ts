@@ -43,9 +43,10 @@ const taskSchema = new Schema<ITask, Record<string, unknown>>(
       index: true,
     },
     attachment: {
-      fileName: String,
-      fileUrl: String,
-      mimeType: String,
+      fileName: { type: String, required: false },
+      fileUrl: { type: String, required: false },
+      mimeType: { type: String, required: false },
+      size: { type: Number, required: false },
     },
   },
   {

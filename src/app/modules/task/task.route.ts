@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.post(
   '/create-task',
-  validateRequest(TaskValidation.createTaskZodSchema),
+  // validateRequest(TaskValidation.createTaskZodSchema),
   auth(),
   upload.single('attachment'),
   TaskController.createTask
@@ -23,7 +23,7 @@ router.get('/:id', auth(), TaskController.getSingleTask);
 
 router.patch(
   '/:id',
-  validateRequest(TaskValidation.updateTaskZodSchema),
+  // validateRequest(TaskValidation.updateTaskZodSchema),
   auth(),
   upload.single('attachment'),
   TaskController.updateTask

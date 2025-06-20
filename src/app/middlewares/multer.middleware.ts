@@ -1,12 +1,9 @@
-/* eslint-disable no-unused-vars */
-import { Request } from 'express';
 import multer from 'multer';
-
 const storage = multer.diskStorage({
-  destination: function (req: Request, file, cb) {
-    cb(null, 'public/uploads');
+  destination: function (req, file, cb) {
+    cb(null, './public/uploads');
   },
-  filename: function (req: Request, file, cb) {
+  filename: function (req, file, cb) {
     cb(null, Date.now() + '-' + file.originalname);
   },
 });

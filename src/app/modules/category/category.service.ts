@@ -22,7 +22,7 @@ const getAllCategories = async (): Promise<any[]> => {
         pipeline: [
           {
             $lookup: {
-              from: 'taskComments',
+              from: 'taskcomments',
               let: { taskId: '$_id' },
               pipeline: [
                 {

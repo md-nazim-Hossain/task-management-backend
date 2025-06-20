@@ -5,6 +5,7 @@ import httpStatus from 'http-status';
 import cookieParser from 'cookie-parser';
 import globalErrorHandler from './app/middlewares/globalErrorsHandler.middleware';
 import { routes } from './app/routes';
+import path from 'path';
 const app: Application = express();
 
 app.use(
@@ -13,6 +14,8 @@ app.use(
     credentials: true,
   })
 );
+// eslint-disable-next-line no-undef
+app.use('/public', express.static(path.join(__dirname, '../public')));
 
 //parser
 app.use(express.json());

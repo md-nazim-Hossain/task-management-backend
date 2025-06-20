@@ -32,4 +32,5 @@ export type ITaskAttachment = {
   fileName: string;
   fileUrl: string;
   mimeType: string;
+  size: number;
 };
