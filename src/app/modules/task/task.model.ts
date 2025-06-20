@@ -68,6 +68,7 @@ taskSchema.virtual('taskComments', {
 
 taskSchema.pre('find', function () {
   this.populate('creator', '+email +fullName +profileImage +_id');
+  this.populate('category', '+title +_id +slug +description +status');
 });
 
 export const Task = model<ITask>('Task', taskSchema);

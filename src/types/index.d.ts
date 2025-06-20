@@ -7,3 +7,7 @@ declare global {
     }
   }
 }
+
+declare global {
+  const io: import('socket.io').Server;
+}

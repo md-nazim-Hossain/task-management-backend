@@ -6,7 +6,7 @@ import { TaskService } from './task.service';
 import httpStatus from 'http-status';
 import pick from '../../../utils/pick';
 import { TaskConstant } from './task.constant';
-import { IGenericResponse, IPaginationOptions } from '../../../types';
+import { IPaginationOptions } from '../../../types';
 import { paginationFields } from '../../../utils/paginationConstant';
 
 const createTask = catchAsync(async (req: Request, res: Response) => {
@@ -43,10 +43,11 @@ const getAllTasks = catchAsync(async (req: Request, res: Response) => {
     paginationFields
   );
   const result = await TaskService.getAllTasks(filters, paginationOptions);
-  sendResponse<IGenericResponse<ITask[]>>(res, {
+  sendResponse<ITask[]>(res, {
     success: true,
     message: 'Tasks retrieved successfully',
-    data: result,
+    data: result.data,
+    meta: result.meta,
     statusCode: httpStatus.OK,
   });
 });
@@ -65,10 +66,11 @@ const getAllUserTasks = catchAsync(async (req: Request, res: Response) => {
     filters,
     paginationOptions
   );
-  sendResponse<IGenericResponse<ITask[]>>(res, {
+  sendResponse<ITask[]>(res, {
     success: true,
     message: 'Tasks retrieved successfully',
-    data: result,
+    data: result.data,
+    meta: result.meta,
     statusCode: httpStatus.OK,
   });
 });

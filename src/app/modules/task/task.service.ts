@@ -85,28 +85,18 @@ const getAllUserTasks = async (
   userId: string,
   filters: ITaskFilters,
   paginationOptions: IPaginationOptions
-): Promise<IGenericResponse<ITask[]>> => {
+): Promise<IGenericResponse<any[]>> => {
   const { searchTerm, ...filtersData } = filters;
   const { page, limit, skip, sortBy, sortOrder } =
     paginationHelpers.calculatePagination(paginationOptions);
 
-  const andConditions = [];
+  const andConditions: any[] = [];
 
   if (searchTerm) {
     andConditions.push({
       $or: [
-        {
-          title: {
-            $regex: searchTerm,
-            $options: 'i',
-          },
-        },
-        {
-          description: {
-            $regex: searchTerm,
-            $options: 'i',
-          },
-        },
+        { title: { $regex: searchTerm, $options: 'i' } },
+        { description: { $regex: searchTerm, $options: 'i' } },
       ],
     });
   }
@@ -119,25 +109,68 @@ const getAllUserTasks = async (
     });
   }
 
-  andConditions.push({
-    creator: userId,
-  });
+  andConditions.push({ creator: new mongoose.Types.ObjectId(userId) });
 
-  const sortConditions: { [key: string]: SortOrder } = {};
-
-  if (sortBy && sortOrder) {
-    sortConditions[sortBy] = sortOrder;
-  }
-
-  const whereConditions =
+  const matchCondition =
     andConditions.length > 0 ? { $and: andConditions } : {};
 
-  const result = await Task.find(whereConditions)
-    .sort(sortConditions)
-    .skip(skip)
-    .limit(limit);
+  const sortStage: Record<string, 1 | -1> =
+    sortBy && sortOrder
+      ? { [sortBy]: sortOrder === 'asc' ? 1 : -1 }
+      : { createdAt: -1 };
 
-  const total = await Task.countDocuments(whereConditions);
+  const result = await Task.aggregate([
+    { $match: matchCondition },
+    {
+      $lookup: {
+        from: 'taskcomments',
+        localField: '_id',
+        foreignField: 'task',
+        as: 'comments',
+      },
+    },
+    {
+      $addFields: {
+        commentsCount: { $size: '$comments' },
+      },
+    },
+    {
+      $lookup: {
+        from: 'groups',
+        localField: 'assignedTo',
+        foreignField: '_id',
+        as: 'assignedTo',
+      },
+    },
+    {
+      $unwind: {
+        path: '$assignedTo',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        title: 1,
+        description: 1,
+        status: 1,
+        priority: 1,
+        dueDate: 1,
+        commentsCount: 1,
+        creator: 1,
+        assignedTo: {
+          _id: 1,
+          title: 1,
+        },
+        createdAt: 1,
+      },
+    },
+    { $sort: sortStage },
+    { $skip: skip },
+    { $limit: limit },
+  ]);
+
+  const total = await Task.countDocuments(matchCondition);
+
   return {
     meta: {
       page,
@@ -159,7 +192,7 @@ const updateTask = async (
 ): Promise<ITask | null> => {
   const findTask = await Task.findById(id);
   if (!findTask) throw new ApiError(httpStatus.NOT_FOUND, 'Task not found');
-  if (payload.attachment && findTask.attachment) {
+  if (payload.attachment?.fileUrl && findTask.attachment?.fileUrl) {
     const deletePrevFile = deleteFile(findTask.attachment.fileUrl);
     if (!deletePrevFile) {
       throw new ApiError(httpStatus.NOT_FOUND, 'Attachment not found');

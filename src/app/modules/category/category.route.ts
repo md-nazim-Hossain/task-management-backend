@@ -13,7 +13,6 @@ router.post(
   CategoryController.createCategory
 );
 router.get('/', auth(), CategoryController.getAllCategories);
-router.get('/:id', auth(), CategoryController.getSingleCategory);
 router.patch(
   '/:id',
   validateRequest(CategoryValidation.updateCategoryZodSchema),

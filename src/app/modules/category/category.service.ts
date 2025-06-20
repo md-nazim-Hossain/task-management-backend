@@ -11,8 +11,10 @@ const createCategory = async (payload: ICategory): Promise<ICategory> => {
   return result;
 };
 
-const getAllCategories = async (): Promise<any[]> => {
-  const result = await Category.aggregate([
+const getAllCategories = async (slug?: string): Promise<any[]> => {
+  const pipeline = [];
+  if (slug) pipeline.push({ $match: { slug } });
+  pipeline.push(
     {
       $lookup: {
         from: 'tasks',
@@ -73,6 +75,25 @@ const getAllCategories = async (): Promise<any[]> => {
           },
           {
             $lookup: {
+              from: 'categories',
+              localField: 'category',
+              foreignField: '_id',
+              as: 'category',
+              pipeline: [
+                {
+                  $project: {
+                    _id: 1,
+                    title: 1,
+                    slug: 1,
+                    description: 1,
+                    status: 1,
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $lookup: {
               from: 'groups',
               localField: 'assignedTo',
               foreignField: '_id',
@@ -118,7 +139,26 @@ const getAllCategories = async (): Promise<any[]> => {
               preserveNullAndEmptyArrays: true,
             },
           },
+          {
+            $unwind: {
+              path: '$category',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
         ],
+      },
+    },
+    {
+      $addFields: {
+        completedTasksCount: {
+          $size: {
+            $filter: {
+              input: '$tasks',
+              as: 'task',
+              cond: { $eq: ['$$task.status', 'completed'] },
+            },
+          },
+        },
       },
     },
     {
@@ -148,19 +188,11 @@ const getAllCategories = async (): Promise<any[]> => {
         createdAt: 1,
         creator: 1,
         tasks: 1,
+        completedTasksCount: 1,
       },
-    },
-  ]);
-
-  return result;
-};
-
-const getSingleCategory = async (id: string): Promise<ICategory | null> => {
-  const result = await Category.findById(id).populate(
-    'creator',
-    '+email +fullName +profileImage +_id'
+    }
   );
-  if (!result) throw new ApiError(httpStatus.NOT_FOUND, 'Category not found');
+  const result = await Category.aggregate(pipeline);
   return result;
 };
 
@@ -189,7 +221,6 @@ const deleteCategory = async (id: string): Promise<ICategory | null> => {
 export const CategoryService = {
   createCategory,
   getAllCategories,
-  getSingleCategory,
   updateCategory,
   deleteCategory,
 };

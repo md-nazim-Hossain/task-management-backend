@@ -1,14 +1,17 @@
-import path from 'path';
+/* eslint-disable no-undef */
 import fs from 'fs';
+import path from 'path';
 
-export const deleteFile = (filePath: string) => {
-  const actualPath = path.join(process.cwd(), 'public', filePath);
-  try {
-    if (fs.existsSync(actualPath)) {
-      fs.unlinkSync(actualPath);
-      return true;
-    }
-  } catch (error) {
+export const deleteFile = (fileUrl?: string): boolean => {
+  if (!fileUrl) {
+    console.warn('deleteFile called with undefined fileUrl');
+    return false;
+  }
+  const filePath = path.join(__dirname, '../../public', fileUrl);
+  if (fs.existsSync(filePath)) {
+    fs.unlinkSync(filePath);
+    return true;
+  } else {
     return false;
   }
 };

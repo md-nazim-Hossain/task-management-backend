@@ -65,14 +65,21 @@ const updateTaskComment = async (
 ): Promise<ITaskComment | null> => {
   const result = await TaskComment.findOneAndUpdate(
     { _id: id },
-    { payload, isEdited: true, lastEditedAt: new Date().toISOString() },
+    {
+      ...payload,
+      isEdited: true,
+      lastEditedAt: new Date().toISOString(),
+    },
     {
       new: true,
       runValidators: true,
     }
   );
-  if (!result)
+
+  if (!result) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Task comment not found');
+  }
+
   return result;
 };
 
