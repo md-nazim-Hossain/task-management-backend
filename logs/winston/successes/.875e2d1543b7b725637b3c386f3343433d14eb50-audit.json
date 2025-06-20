@@ -39,6 +39,31 @@
             "date": 1750395630264,
             "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/successes/phu-2025-06-20-11-success.log",
             "hash": "c5c458264575b1f101e9a986b706022c6258a76660455d1fbfd99437a93c8c3b"
+        },
+        {
+            "date": 1750410796264,
+            "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/successes/phu-2025-06-20-15-success.log",
+            "hash": "143065c8718fe04723283c3fdd61263c3344a29f362dd4599c4e0b7533f50050"
+        },
+        {
+            "date": 1750414858000,
+            "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/successes/phu-2025-06-20-16-success.log",
+            "hash": "df54fb28e91badc5c742c14445dbd2f8e12799f6dc5343c162d34abeeb101ac8"
+        },
+        {
+            "date": 1750418705846,
+            "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/successes/phu-2025-06-20-17-success.log",
+            "hash": "0a4c135eaccbeb499f2ae02dae4c358a6dc5b5a3ae97e27a4a9694cb384f2dd4"
+        },
+        {
+            "date": 1750421474598,
+            "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/successes/phu-2025-06-20-18-success.log",
+            "hash": "68a1afe4e9ddab8935cd845797ea4721b7e60dfb68309576659b73c16adcc3fc"
+        },
+        {
+            "date": 1750424622247,
+            "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/successes/phu-2025-06-20-19-success.log",
+            "hash": "51a408331e6ebb1b153393c82e82a5e3061c8e119b7cbb087fc770850b7916c5"
         }
     ],
     "hashType": "sha256"

@@ -7,7 +7,12 @@ import globalErrorHandler from './app/middlewares/globalErrorsHandler.middleware
 import { routes } from './app/routes';
 const app: Application = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ['http://localhost:5173'],
+    credentials: true,
+  })
+);
 
 //parser
 app.use(express.json());

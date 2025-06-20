@@ -47,7 +47,7 @@ const loginUser = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
   return {
     accessToken,
     refreshToken,
-    status: isUserExit?.status,
+    user,
   };
 };
 
@@ -89,7 +89,7 @@ const changePassword = async (
 ): Promise<boolean> => {
   const { oldPassword, newPassword } = payload;
   const userModel = new User();
-  const isUserExist = await userModel.isUserExist(user.userId);
+  const isUserExist = await userModel.isUserExist(user.email);
 
   if (!isUserExist) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User does not exist');
@@ -116,8 +116,17 @@ const changePassword = async (
   return true;
 };
 
+const logOut = async (id: string) => {
+  const isUserExist = await User.findOne({ _id: id });
+  if (!isUserExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User does not exist');
+  }
+  return true;
+};
+
 export const AuthService = {
   loginUser,
   refreshToken,
   changePassword,
+  logOut,
 };

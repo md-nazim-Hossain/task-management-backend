@@ -12,66 +12,12 @@ const createGroup = async (payload: IGroup): Promise<IGroup> => {
   return result;
 };
 
-const getAllGroups = async (
-  filters: IGroupFilters,
-  paginationOptions: IPaginationOptions
-): Promise<IGenericResponse<IGroup[]>> => {
-  const { searchTerm, ...filtersData } = filters;
-  const { page, limit, skip, sortBy, sortOrder } =
-    paginationHelpers.calculatePagination(paginationOptions);
-
-  const andConditions = [];
-
-  if (searchTerm) {
-    andConditions.push({
-      $or: [
-        {
-          title: {
-            $regex: searchTerm,
-            $options: 'i',
-          },
-        },
-        {
-          description: {
-            $regex: searchTerm,
-            $options: 'i',
-          },
-        },
-      ],
-    });
-  }
-
-  if (Object.keys(filtersData).length) {
-    andConditions.push({
-      $and: Object.entries(filtersData).map(([field, value]) => ({
-        [field]: value,
-      })),
-    });
-  }
-
-  const sortConditions: { [key: string]: SortOrder } = {};
-
-  if (sortBy && sortOrder) {
-    sortConditions[sortBy] = sortOrder;
-  }
-
-  const whereConditions =
-    andConditions.length > 0 ? { $and: andConditions } : {};
-
-  const result = await Group.find(whereConditions)
-    .sort(sortConditions)
-    .skip(skip)
-    .limit(limit);
-
-  const total = await Group.countDocuments(whereConditions);
-  return {
-    meta: {
-      page,
-      limit,
-      total,
-    },
-    data: result,
-  };
+const getAllGroups = async (): Promise<IGroup[]> => {
+  const result = await Group.find().populate(
+    'creator',
+    '+email +fullName +_id +profileImage'
+  );
+  return result;
 };
 
 const getAllMyGroups = async (
@@ -127,7 +73,8 @@ const getAllMyGroups = async (
   const result = await Group.find(whereConditions)
     .sort(sortConditions)
     .skip(skip)
-    .limit(limit);
+    .limit(limit)
+    .populate('creator', '+email +fullName +_id +profileImage');
 
   const total = await Group.countDocuments(whereConditions);
   return {
@@ -141,7 +88,10 @@ const getAllMyGroups = async (
 };
 
 const getSingleGroup = async (id: string): Promise<IGroup | null> => {
-  const result = await Group.findById(id);
+  const result = await Group.findById(id).populate(
+    'creator',
+    '+email +fullName +_id +profileImage'
+  );
   return result;
 };
 

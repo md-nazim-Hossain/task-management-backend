@@ -22,6 +22,39 @@ const getAllCategories = async (): Promise<any[]> => {
         pipeline: [
           {
             $lookup: {
+              from: 'taskComments',
+              let: { taskId: '$_id' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$task', '$$taskId'] },
+                  },
+                },
+                {
+                  $count: 'count',
+                },
+              ],
+              as: 'comments',
+            },
+          },
+          {
+            $addFields: {
+              commentsCount: {
+                $cond: {
+                  if: { $gt: [{ $size: '$comments' }, 0] },
+                  then: { $arrayElemAt: ['$comments.count', 0] },
+                  else: 0,
+                },
+              },
+            },
+          },
+          {
+            $project: {
+              comments: 0,
+            },
+          },
+          {
+            $lookup: {
               from: 'users',
               localField: 'creator',
               foreignField: '_id',
@@ -39,8 +72,49 @@ const getAllCategories = async (): Promise<any[]> => {
             },
           },
           {
+            $lookup: {
+              from: 'groups',
+              localField: 'assignedTo',
+              foreignField: '_id',
+              as: 'assignedTo',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'users',
+                    localField: 'members',
+                    foreignField: '_id',
+                    as: 'members',
+                    pipeline: [
+                      {
+                        $project: {
+                          fullName: 1,
+                          email: 1,
+                          profileImage: 1,
+                          _id: 1,
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  $project: {
+                    title: 1,
+                    members: 1,
+                    _id: 1,
+                  },
+                },
+              ],
+            },
+          },
+          {
             $unwind: {
               path: '$creator',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $unwind: {
+              path: '$assignedTo',
               preserveNullAndEmptyArrays: true,
             },
           },

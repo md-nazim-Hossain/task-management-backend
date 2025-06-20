@@ -35,7 +35,7 @@ const updateTaskZodSchema = z.object({
     status: z
       .enum(Object.values(ENUM_TASK_STATUS) as [string, ...string[]])
       .optional(),
-    dueDate: z.date().optional(),
+    dueDate: z.string().optional(),
     assignedTo: z.string().optional(),
     priority: z
       .enum(Object.values(ENUM_TASK_PRIORITY) as [string, ...string[]])

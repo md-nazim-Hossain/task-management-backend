@@ -28,13 +28,8 @@ const createGroup = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllGroups = catchAsync(async (req: Request, res: Response) => {
-  const filters = pick(req.query, GroupConstant.groupFiltersFields);
-  const paginationOptions: IPaginationOptions = pick(
-    req.query,
-    paginationFields
-  );
-  const result = await GroupService.getAllGroups(filters, paginationOptions);
-  sendResponse<IGenericResponse<IGroup[]>>(res, {
+  const result = await GroupService.getAllGroups();
+  sendResponse<IGroup[]>(res, {
     success: true,
     message: 'Groups retrieved successfully',
     data: result,

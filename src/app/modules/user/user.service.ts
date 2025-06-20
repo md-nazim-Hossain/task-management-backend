@@ -3,6 +3,7 @@ import { User } from './user.model';
 import ApiError from '../../../utils/ApiError';
 import httpStatus from 'http-status';
 import { deleteFile } from '../../../utils/deleteFile';
+import { Request } from 'express';
 
 const createUser = async (payload: IUser): Promise<Omit<IUser, 'password'>> => {
   const user = new User();
@@ -17,8 +18,13 @@ const createUser = async (payload: IUser): Promise<Omit<IUser, 'password'>> => {
   return userWithoutPassword;
 };
 
-const getAllUsers = async (): Promise<IUser[]> => {
-  const result = await User.find();
+const getAllUsers = async (req: Request): Promise<IUser[]> => {
+  const status = req.query.status;
+  const filter: Record<string, any> = {};
+  if (typeof status === 'string') {
+    filter.status = status === 'true';
+  }
+  const result = await User.find(filter);
   return result;
 };
 

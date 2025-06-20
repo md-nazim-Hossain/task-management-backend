@@ -40,4 +40,9 @@ const groupSchema = new Schema<IGroup, Record<string, unknown>>(
   }
 );
 
+groupSchema.pre('find', function (next) {
+  this.populate('members', '+email +fullName +_id +profileImage');
+  next();
+});
+
 export const Group = model<IGroup>('Group', groupSchema);

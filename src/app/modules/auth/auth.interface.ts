@@ -1,3 +1,5 @@
+import { IUser } from '../user/user.interface';
+
 export type ILoginUser = {
   email: string;
   password: string;
@@ -6,7 +8,7 @@ export type ILoginUser = {
 export type ILoginUserResponse = {
   accessToken: string;
   refreshToken?: string;
-  status: boolean;
+  user: IUser;
 };
 export type IRefreshTokenResponse = {
   accessToken: string;

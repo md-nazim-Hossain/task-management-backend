@@ -39,6 +39,31 @@
             "date": 1750395751898,
             "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/errors/phu-2025-06-20-11-error.log",
             "hash": "144b25de9f1ca4544e44a53cae0fa55cbfff36d4efb30e07936f80ec64fbddbc"
+        },
+        {
+            "date": 1750410796267,
+            "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/errors/phu-2025-06-20-15-error.log",
+            "hash": "c7006b87d09c9457f6a24e06cdac58ea742c4736ac2ce5d44d957c4407dbf996"
+        },
+        {
+            "date": 1750414862731,
+            "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/errors/phu-2025-06-20-16-error.log",
+            "hash": "45382240bc03adf80e8ca5579e145e744d8012198bde8f7c6e2e81cdd1c50f49"
+        },
+        {
+            "date": 1750418718580,
+            "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/errors/phu-2025-06-20-17-error.log",
+            "hash": "74772b586be78971afe16b183e97156b86df936fa165d80b7290c626525fbc3e"
+        },
+        {
+            "date": 1750422003196,
+            "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/errors/phu-2025-06-20-18-error.log",
+            "hash": "a0efb8c75dd25bb01dc73b802bc4daafb282e242a2f414d20cd38c4b8f3c937e"
+        },
+        {
+            "date": 1750425529271,
+            "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/errors/phu-2025-06-20-19-error.log",
+            "hash": "11d38b402353e82ebd738173f38cf375eb377d17fe8a9866217ceff497f626f3"
         }
     ],
     "hashType": "sha256"

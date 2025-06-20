@@ -8,7 +8,7 @@ import sendResponse from '../../../utils/ApiResponse';
 
 const createdUser = catchAsync(async (req: Request, res: Response) => {
   const result = await UserService.createUser(req.body);
-  sendResponse<IUser>(res, {
+  sendResponse<Omit<IUser, 'password'>>(res, {
     success: true,
     message: 'User created successfully',
     data: result,
@@ -30,7 +30,7 @@ const getMyProfile = catchAsync(async (req: Request, res: Response) => {
 
 // eslint-disable-next-line no-unused-vars
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
-  const result = await UserService.getAllUsers();
+  const result = await UserService.getAllUsers(req);
   sendResponse<IUser[]>(res, {
     success: true,
     message: 'Users retrieved successfully',
