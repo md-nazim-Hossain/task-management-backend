@@ -7,6 +7,8 @@ import { Task } from './task.model';
 import httpStatus from 'http-status';
 import { deleteFile } from '../../../utils/deleteFile';
 import { TaskComment } from '../taskComment/task-comment.model';
+import { Notification } from '../notification/notification.model';
+import { IGroup } from '../group/group.interface';
 
 const createTask = async (payload: ITask): Promise<ITask> => {
   if (
@@ -140,11 +142,87 @@ const getAllUserTasks = async (
         localField: 'assignedTo',
         foreignField: '_id',
         as: 'assignedTo',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'members',
+              foreignField: '_id',
+              as: 'members',
+              pipeline: [
+                {
+                  $project: {
+                    email: 1,
+                    fullName: 1,
+                    profileImage: 1,
+                    _id: 1,
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $project: {
+              title: 1,
+              _id: 1,
+              members: 1,
+            },
+          },
+        ],
       },
     },
     {
       $unwind: {
         path: '$assignedTo',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'creator',
+        foreignField: '_id',
+        as: 'creator',
+        pipeline: [
+          {
+            $project: {
+              email: 1,
+              fullName: 1,
+              profileImage: 1,
+              _id: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $unwind: {
+        path: '$creator',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'category',
+        foreignField: '_id',
+        as: 'category',
+        pipeline: [
+          {
+            $project: {
+              title: 1,
+              _id: 1,
+              slug: 1,
+              description: 1,
+              status: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $unwind: {
+        path: '$category',
         preserveNullAndEmptyArrays: true,
       },
     },
@@ -157,11 +235,12 @@ const getAllUserTasks = async (
         dueDate: 1,
         commentsCount: 1,
         creator: 1,
-        assignedTo: {
-          _id: 1,
-          title: 1,
-        },
+        assignedTo: 1,
         createdAt: 1,
+        updatedAt: 1,
+        category: 1,
+        attachment: 1,
+        members: 1,
       },
     },
     { $sort: sortStage },
@@ -201,7 +280,39 @@ const updateTask = async (
   const task = await Task.findOneAndUpdate({ _id: id }, payload, {
     new: true,
     runValidators: true,
-  });
+  })
+    .populate('creator')
+    .populate('assignedTo');
+
+  if (!task) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Task not found');
+  }
+  const recipients: string[] = [];
+
+  if (task.creator?._id) recipients.push(task.creator._id.toString());
+  if ((task.assignedTo as IGroup)?.members?.length) {
+    recipients.push(
+      ...(task.assignedTo as IGroup).members.map((m: any) => m._id.toString())
+    );
+  }
+
+  const uniqueRecipients = [...new Set(recipients)];
+
+  await Promise.all(
+    uniqueRecipients.map(async userId => {
+      const message = `Task "${task.title}" has been updated.`;
+      const storeData = {
+        receiver: userId,
+        message,
+        notificationType: 'task_updated',
+        task: new mongoose.Types.ObjectId(task._id),
+        sender: new mongoose.Types.ObjectId(task.creator?._id),
+      };
+      const notification = await Notification.create(storeData);
+      // Emit via socket
+      global.io.to(userId).emit('task_updated', notification);
+    })
+  );
   return task;
 };
 

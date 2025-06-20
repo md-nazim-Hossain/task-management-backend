@@ -26,4 +26,6 @@ router.post(
 
 router.post('/logout', auth(), AuthController.logOut);
 
+router.get('/dashboard', auth(), AuthController.dashboardData);
+
 export const AuthRoutes = router;

@@ -1,38 +1,56 @@
 import mongoose, { Error } from 'mongoose';
 import config from './config/index';
-import { Server } from 'http';
+import { createServer, Server } from 'http'; // use createServer
 import { errorLogger, logger } from './utils/logger';
 import app from './app';
+import { Server as SocketIOServer } from 'socket.io';
+
+let server: Server;
+let io: SocketIOServer; // declare socket server
 
 process.on('uncaughtException', error => {
   errorLogger.error(error);
   process.exit(1);
 });
 
-let server: Server;
 async function main() {
   try {
     await mongoose.connect(config.db_url as string);
     logger.info('Database connected successfully!');
-    server = app.listen(config.port, () => {
-      logger.info(`Server app listening on port ${config.port}`);
+    server = createServer(app);
+    io = new SocketIOServer(server, {
+      cors: {
+        origin: 'http://localhost:5173',
+        credentials: true,
+      },
+    });
+
+    io.on('connection', socket => {
+      logger.info(`🔌 User connected: ${socket.id}`);
+      socket.on('join', (userId: string) => {
+        socket.join(userId);
+      });
+      socket.on('disconnect', () => {
+        logger.info(`❌ User disconnected: ${socket.id}`);
+      });
+    });
+
+    global.io = io;
+    server.listen(config.port, () => {
+      logger.info(`🚀 Server listening on port ${config.port}`);
     });
   } catch (error: Error | unknown) {
     errorLogger.error(
-      'Failed To connected database',
+      'Failed to connect to database',
       error instanceof Error ? error.message : error
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   process.on('unhandledRejection', (error: any) => {
-    console.log(
-      'Unhandled Rejection is detected we are closing server ....',
-      error
-    );
+    console.log('Unhandled Rejection. Shutting down server...', error);
     if (server) {
       server.close(() => {
-        errorLogger.log(error);
+        errorLogger.error(error);
         process.exit(1);
       });
     } else {
@@ -40,12 +58,12 @@ async function main() {
     }
   });
 }
-//
+
 main();
 
-process.on('SIGTERM', () => {
-  logger.info('SIGTERM is received');
-  if (server) {
-    server.close();
-  }
-});
+if (process.env.NODE_ENV === 'production') {
+  process.on('SIGTERM', () => {
+    logger.info('SIGTERM is received');
+    if (server) server.close();
+  });
+}

@@ -5,6 +5,7 @@ import { TaskRoutes } from '../modules/task/task.route';
 import { CategoryRoutes } from '../modules/category/category.route';
 import { TaskCommentRoutes } from '../modules/taskComment/task-comment.route';
 import { GroupRoutes } from '../modules/group/group.route';
+import { NotificationRoutes } from '../modules/notification/notification.route';
 
 const router = express.Router();
 
@@ -32,6 +33,10 @@ const moduleRoutes = [
   {
     path: '/group',
     route: GroupRoutes,
+  },
+  {
+    path: '/notification',
+    route: NotificationRoutes,
   },
 ];
 

@@ -76,9 +76,22 @@ const logOut = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const dashboardData = catchAsync(async (req: Request, res: Response) => {
+  const user = (req as Request & { user: { userId: string; role: string } })
+    .user;
+  const result = await AuthService.dashboardData(user?.userId);
+  sendResponse(res, {
+    success: true,
+    message: 'Dashboard data retrieved successfully',
+    data: result,
+    statusCode: httpStatus.OK,
+  });
+});
+
 export const AuthController = {
   loginUser,
   refreshToken,
   changePassword,
   logOut,
+  dashboardData,
 };

@@ -11,6 +11,8 @@ import { jwtTokenHelpers } from '../../../helpers/jwtHelpers';
 import { hash } from 'bcrypt';
 import ApiError from '../../../utils/ApiError';
 import { User } from '../user/user.model';
+import { Task } from '../task/task.model';
+import { Category } from '../category/category.model';
 
 const loginUser = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
   const { email, password } = payload;
@@ -124,9 +126,71 @@ const logOut = async (id: string) => {
   return true;
 };
 
+const dashboardData = async (id: string) => {
+  const totalTask = await Task.countDocuments({ creator: id });
+  const totalCompletedTask = await Task.countDocuments({
+    creator: id,
+    status: 'completed',
+  });
+  const totalInProgressTask = await Task.countDocuments({
+    creator: id,
+    status: 'in_progress',
+  });
+  const totalTodoTask = await Task.countDocuments({
+    creator: id,
+    status: 'todo',
+  });
+
+  const totalOverdueTask = await Task.countDocuments({
+    creator: id,
+    dueDate: { $gt: new Date() },
+    status: { $ne: 'completed' },
+  });
+
+  const totalUpcomingTask = await Task.countDocuments({
+    creator: id,
+    dueDate: { $lt: new Date() },
+    status: { $ne: 'completed' },
+  });
+
+  const totalProjects = await Category.countDocuments({ creator: id });
+  const data = [
+    {
+      title: 'Total Project',
+      value: totalProjects,
+    },
+    {
+      title: 'Total Task',
+      value: totalTask,
+    },
+    {
+      title: 'Completed Task',
+      value: totalCompletedTask,
+    },
+    {
+      title: 'In Progress Task',
+      value: totalInProgressTask,
+    },
+    {
+      title: 'Todo Task',
+      value: totalTodoTask,
+    },
+    {
+      title: 'Overdue Task',
+      value: totalOverdueTask,
+    },
+    {
+      title: 'Upcoming Task',
+      value: totalUpcomingTask,
+    },
+  ];
+  return data;
+};
+
 export const AuthService = {
   loginUser,
   refreshToken,
   changePassword,
   logOut,
+  dashboardData,
 };
