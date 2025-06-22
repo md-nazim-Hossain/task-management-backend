@@ -42,6 +42,16 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getAllMyUsers = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserService.getAllMyUsers(req.user.userId);
+  sendResponse<IUser[]>(res, {
+    success: true,
+    message: 'Users retrieved successfully',
+    data: result,
+    statusCode: httpStatus.OK,
+  });
+});
+
 const getSingleUser = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const result = await UserService.getSingleUser(id);
@@ -59,7 +69,7 @@ const updateUser = catchAsync(async (req: Request, res: Response) => {
   const image = file ? `/uploads/${file.filename}` : undefined;
   const { ...payload } = req.body;
   payload.profileImage = image;
-  const result = await UserService.updateUser(id, payload);
+  const result = await UserService.updateUser(id, payload, req.user.userId);
   sendResponse<IUser>(res, {
     success: true,
     message: 'User updated successfully',
@@ -70,7 +80,7 @@ const updateUser = catchAsync(async (req: Request, res: Response) => {
 
 const deleteUser = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await UserService.deleteUser(id);
+  const result = await UserService.deleteUser(id, req.user.userId);
   sendResponse<IUser>(res, {
     success: true,
     message: 'User deleted successfully',
@@ -86,4 +96,5 @@ export const UserController = {
   getSingleUser,
   updateUser,
   deleteUser,
+  getAllMyUsers,
 };

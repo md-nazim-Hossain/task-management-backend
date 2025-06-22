@@ -35,6 +35,11 @@ const userSchema = new Schema<IUser, Record<string, unknown>, IUserMethods>(
       type: String,
       default: null,
     },
+    creator: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
   },
   {
     timestamps: true,
@@ -67,6 +72,11 @@ userSchema.methods.isPasswordMatch = async function (
 
 userSchema.pre('save', async function (next) {
   this.password = await bcrypt.hash(this.password, Number(config.bycrypt_salt));
+  next();
+});
+
+userSchema.pre('find', async function (next) {
+  this.populate('creator', '+email +fullName +_id +profileImage');
   next();
 });
 

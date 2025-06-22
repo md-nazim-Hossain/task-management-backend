@@ -273,6 +273,12 @@ const updateTask = async (
 ): Promise<ITask | null> => {
   const findTask = await Task.findById(id);
   if (!findTask) throw new ApiError(httpStatus.NOT_FOUND, 'Task not found');
+  if (findTask.creator._id.toString() !== updaterId) {
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      'You are not authorized to update this task'
+    );
+  }
   if (payload.attachment?.fileUrl && findTask.attachment?.fileUrl) {
     const deletePrevFile = deleteFile(findTask.attachment.fileUrl);
     if (!deletePrevFile) {
@@ -289,6 +295,7 @@ const updateTask = async (
   if (!task) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Task not found');
   }
+
   const recipients: string[] = [];
 
   if (task.creator?._id) recipients.push(task.creator._id.toString());
@@ -322,17 +329,30 @@ const updateTask = async (
   return task;
 };
 
-const deleteTask = async (id: string): Promise<ITask | null> => {
-  const [task] = await Promise.all([
-    Task.findOneAndDelete({ _id: id }),
-    TaskComment.deleteMany({ task: id }),
-  ]);
+const deleteTask = async (
+  id: string,
+  userId: string
+): Promise<ITask | null> => {
+  const task = await Task.findById(id);
+  if (!task) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Task not found');
+  }
+  if (task.creator.toString() !== userId) {
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      'You are not allowed to delete this task'
+    );
+  }
 
-  if (task?.attachment?.fileUrl) {
+  await TaskComment.deleteMany({ task: id });
+
+  if (task.attachment?.fileUrl) {
     deleteFile(task.attachment.fileUrl);
   }
 
-  return task;
+  const deletedTask = await Task.findByIdAndDelete(id);
+
+  return deletedTask;
 };
 
 export const TaskService = {

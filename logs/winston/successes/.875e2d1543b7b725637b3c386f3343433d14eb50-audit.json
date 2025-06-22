@@ -109,6 +109,11 @@
             "date": 1750609368148,
             "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/successes/phu-2025-06-22-22-success.log",
             "hash": "10500a819c399c822c2bec72b3981e905e8933b005bf9e1ebb031afb6a05aecb"
+        },
+        {
+            "date": 1750612498425,
+            "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/successes/phu-2025-06-22-23-success.log",
+            "hash": "26fcd1adda7f1b156320f7d603fe72f9aba1be76abdff2a0f93b8190123af2c3"
         }
     ],
     "hashType": "sha256"

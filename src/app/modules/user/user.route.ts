@@ -16,6 +16,7 @@ router.post(
 router.get('/my-profile', auth(), UserController.getMyProfile);
 router.get('/', auth(), UserController.getAllUsers);
 router.get('/:id', auth(), UserController.getSingleUser);
+router.get('/my-users', auth(), UserController.getAllMyUsers);
 router.patch(
   '/:id',
   validateRequest(UserValidation.updateUserZodSchema),

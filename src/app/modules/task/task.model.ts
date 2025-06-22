@@ -70,9 +70,10 @@ taskSchema.virtual('taskComments', {
   foreignField: 'task',
 });
 
-taskSchema.pre('find', function () {
+taskSchema.pre('find', function (next) {
   this.populate('creator', '+email +fullName +profileImage +_id');
   this.populate('category', '+title +_id +slug +description +status');
+  next();
 });
 
 export const Task = model<ITask>('Task', taskSchema);

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 export type IUser = {
   _id: string;
@@ -10,6 +10,7 @@ export type IUser = {
   passwordChangeAt?: Date;
   profileImage?: string;
   password: string;
+  creator: Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -26,4 +27,5 @@ export type IUserMethods = {
     'email' | 'password' | 'status' | 'role' | '_id'
   > | null>;
 };
+
 export type UserModel = Model<IUser, Record<string, unknown>, IUserMethods>;

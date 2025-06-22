@@ -198,11 +198,18 @@ const getAllCategories = async (slug?: string): Promise<any[]> => {
 
 const updateCategory = async (
   id: string,
-  payload: Partial<ICategory>
+  payload: Partial<ICategory>,
+  userId: string
 ): Promise<ICategory | null> => {
   const findCategory = await Category.findById(id);
   if (!findCategory)
     throw new ApiError(httpStatus.NOT_FOUND, 'Category not found');
+  if (findCategory.creator.toString() !== userId) {
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      'you are not authorized to update this category'
+    );
+  }
   const result = await Category.findOneAndUpdate({ _id: id }, payload, {
     new: true,
     runValidators: true,
@@ -210,10 +217,19 @@ const updateCategory = async (
   return result;
 };
 
-const deleteCategory = async (id: string): Promise<ICategory | null> => {
+const deleteCategory = async (
+  id: string,
+  userId: string
+): Promise<ICategory | null> => {
   const findCategory = await Category.findById(id);
   if (!findCategory)
     throw new ApiError(httpStatus.NOT_FOUND, 'Category not found');
+  if (findCategory.creator.toString() !== userId) {
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      'you are not authorized to delete this category'
+    );
+  }
   const result = await Category.findOneAndDelete({ _id: id });
   return result;
 };

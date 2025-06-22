@@ -97,10 +97,17 @@ const getSingleGroup = async (id: string): Promise<IGroup | null> => {
 
 const updateGroup = async (
   id: string,
-  payload: Partial<IGroup>
+  payload: Partial<IGroup>,
+  userId: string
 ): Promise<IGroup | null> => {
   const findGroup = await Group.findById(id);
   if (!findGroup) throw new ApiError(httpStatus.NOT_FOUND, 'Group not found');
+  if (findGroup.creator.toString() !== userId) {
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      'you are not authorized to update this group'
+    );
+  }
   if (payload.image && findGroup.image) {
     deleteFile(findGroup.image);
   }
@@ -111,9 +118,18 @@ const updateGroup = async (
   return result;
 };
 
-const deleteGroup = async (id: string): Promise<IGroup | null> => {
+const deleteGroup = async (
+  id: string,
+  userId: string
+): Promise<IGroup | null> => {
   const findGroup = await Group.findById(id);
   if (!findGroup) throw new ApiError(httpStatus.NOT_FOUND, 'Group not found');
+  if (findGroup.creator.toString() !== userId) {
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      'you are not authorized to delete this group'
+    );
+  }
   const result = await Group.findOneAndDelete({ _id: id });
   if (findGroup.image) {
     deleteFile(findGroup.image);

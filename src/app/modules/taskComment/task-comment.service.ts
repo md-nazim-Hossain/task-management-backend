@@ -61,10 +61,24 @@ const getSingleTaskComment = async (
 
 const updateTaskComment = async (
   id: string,
-  payload: Partial<ITaskComment>
+  payload: Partial<ITaskComment>,
+  userId: string
 ): Promise<ITaskComment | null> => {
-  const result = await TaskComment.findOneAndUpdate(
-    { _id: id },
+  const existingComment = await TaskComment.findById(id);
+
+  if (!existingComment) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Task comment not found');
+  }
+
+  if (existingComment.author.toString() !== userId) {
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      'You are not allowed to edit this comment'
+    );
+  }
+
+  const updatedComment = await TaskComment.findByIdAndUpdate(
+    id,
     {
       ...payload,
       isEdited: true,
@@ -76,17 +90,23 @@ const updateTaskComment = async (
     }
   );
 
-  if (!result) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Task comment not found');
-  }
-
-  return result;
+  return updatedComment;
 };
 
-const deleteTaskComment = async (id: string): Promise<ITaskComment | null> => {
+const deleteTaskComment = async (
+  id: string,
+  userId: string
+): Promise<ITaskComment | null> => {
   const findTaskComment = await TaskComment.findById(id);
   if (!findTaskComment) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Task comment not found');
+  }
+
+  if (findTaskComment.author.toString() !== userId) {
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      'You are not authorized to delete this comment'
+    );
   }
 
   // Delete all replies and the comment itself in parallel

@@ -44,7 +44,11 @@ const getSingleTaskComment = catchAsync(async (req: Request, res: Response) => {
 
 const updateTaskComment = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await TaskCommentService.updateTaskComment(id, req.body);
+  const result = await TaskCommentService.updateTaskComment(
+    id,
+    req.body,
+    req.user.userId
+  );
   sendResponse<ITaskComment>(res, {
     success: true,
     message: 'Task comment updated successfully',
@@ -55,7 +59,10 @@ const updateTaskComment = catchAsync(async (req: Request, res: Response) => {
 
 const deleteTaskComment = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await TaskCommentService.deleteTaskComment(id);
+  const result = await TaskCommentService.deleteTaskComment(
+    id,
+    req.user.userId
+  );
   sendResponse<ITaskComment>(res, {
     success: true,
     message: 'Task comment deleted successfully',

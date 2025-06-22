@@ -66,10 +66,14 @@ const updateGroup = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const file = req.file;
   const image = file ? `/uploads/${file.filename}` : undefined;
-  const result = await GroupService.updateGroup(id, {
-    ...req.body,
-    image,
-  });
+  const result = await GroupService.updateGroup(
+    id,
+    {
+      ...req.body,
+      image,
+    },
+    req.user.userId
+  );
   sendResponse<IGroup>(res, {
     success: true,
     message: 'Group updated successfully',
@@ -80,7 +84,7 @@ const updateGroup = catchAsync(async (req: Request, res: Response) => {
 
 const deleteGroup = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await GroupService.deleteGroup(id);
+  const result = await GroupService.deleteGroup(id, req.user.userId);
   sendResponse<IGroup>(res, {
     success: true,
     message: 'Group deleted successfully',

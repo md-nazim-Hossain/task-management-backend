@@ -34,12 +34,24 @@ const getSingleUser = async (id: string): Promise<IUser | null> => {
   return result;
 };
 
+const getAllMyUsers = async (userId: string): Promise<IUser[]> => {
+  const result = await User.find({ creator: userId });
+  return result;
+};
+
 const updateUser = async (
   id: string,
-  payload: Partial<IUser>
+  payload: Partial<IUser>,
+  userId: string
 ): Promise<IUser | null> => {
   const findUser = await User.findById(id);
   if (!findUser) throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  if (findUser.creator.toString() !== userId) {
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      'you are not authorized to update this user'
+    );
+  }
   if (payload.profileImage && findUser.profileImage) {
     deleteFile(findUser.profileImage);
   }
@@ -51,9 +63,18 @@ const updateUser = async (
   return result;
 };
 
-const deleteUser = async (id: string): Promise<IUser | null> => {
+const deleteUser = async (
+  id: string,
+  userId: string
+): Promise<IUser | null> => {
   const findUser = await User.findById(id);
   if (!findUser) throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  if (findUser.creator.toString() !== userId) {
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      'you are not authorized to delete this user'
+    );
+  }
   if (findUser.profileImage) {
     deleteFile(findUser.profileImage);
   }
@@ -67,4 +88,5 @@ export const UserService = {
   getSingleUser,
   updateUser,
   deleteUser,
+  getAllMyUsers,
 };
