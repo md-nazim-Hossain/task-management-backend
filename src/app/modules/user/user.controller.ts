@@ -11,6 +11,7 @@ const createdUser = catchAsync(async (req: Request, res: Response) => {
   const image = file ? `/uploads/${file.filename}` : undefined;
   const { ...payload } = req.body;
   payload.profileImage = image;
+  payload.creator = req.user.userId.toString();
   const result = await UserService.createUser(payload);
   sendResponse<Omit<IUser, 'password'>>(res, {
     success: true,

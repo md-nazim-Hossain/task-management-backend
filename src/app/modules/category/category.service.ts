@@ -181,6 +181,13 @@ const getAllCategories = async (slug?: string): Promise<any[]> => {
     },
 
     {
+      $unwind: {
+        path: '$creator',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    {
       $project: {
         title: 1,
         slug: 1,

@@ -269,17 +269,10 @@ const getSingleTask = async (id: string): Promise<ITask | null> => {
 
 const updateTask = async (
   id: string,
-  payload: Partial<ITask>,
-  updaterId: string
+  payload: Partial<ITask>
 ): Promise<ITask | null> => {
   const findTask = await Task.findById(id);
   if (!findTask) throw new ApiError(httpStatus.NOT_FOUND, 'Task not found');
-  if (findTask.creator._id.toString() !== updaterId) {
-    throw new ApiError(
-      httpStatus.FORBIDDEN,
-      'You are not authorized to update this task'
-    );
-  }
   if (payload.attachment?.fileUrl && findTask.attachment?.fileUrl) {
     const deletePrevFile = deleteFile(findTask.attachment.fileUrl);
     if (!deletePrevFile) {
@@ -312,41 +305,6 @@ const updateTask = async (
     taskId: task._id.toString(),
     senderId: task.creator._id.toString(),
     type: 'task-updated',
-  });
-
-  return task;
-};
-
-const updateTaskStatus = async (
-  id: string,
-  payload: Partial<ITask>
-): Promise<ITask | null> => {
-  const task = await Task.findOneAndUpdate({ _id: id }, payload, {
-    new: true,
-    runValidators: true,
-  })
-    .populate('creator')
-    .populate('assignedTo');
-
-  if (!task) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Task not found');
-  }
-
-  const recipients: string[] = [];
-
-  if (task.creator?._id) recipients.push(task.creator._id.toString());
-  if ((task.assignedTo as IGroup)?.members?.length) {
-    recipients.push(
-      ...(task.assignedTo as IGroup).members.map((m: any) => m._id.toString())
-    );
-  }
-
-  await notifyUsers({
-    message: `Task "${task.title}" status has been updated. New status: ${task.status} and old status: ${payload.status}`,
-    userIds: recipients,
-    taskId: task._id.toString(),
-    senderId: task.creator._id.toString(),
-    type: 'task-status-updated',
   });
 
   return task;
@@ -385,5 +343,4 @@ export const TaskService = {
   getSingleTask,
   updateTask,
   deleteTask,
-  updateTaskStatus,
 };

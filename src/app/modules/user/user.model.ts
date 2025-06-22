@@ -75,9 +75,4 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-userSchema.pre('find', async function (next) {
-  this.populate('creator', '+email +fullName +_id +profileImage');
-  next();
-});
-
 export const User = model<IUser, UserModel>('User', userSchema);

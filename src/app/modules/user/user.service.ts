@@ -4,6 +4,7 @@ import ApiError from '../../../utils/ApiError';
 import httpStatus from 'http-status';
 import { deleteFile } from '../../../utils/deleteFile';
 import { Request } from 'express';
+import mongoose from 'mongoose';
 
 const createUser = async (payload: IUser): Promise<Omit<IUser, 'password'>> => {
   const user = new User();
@@ -35,7 +36,9 @@ const getSingleUser = async (id: string): Promise<IUser | null> => {
 };
 
 const getAllMyUsers = async (userId: string): Promise<IUser[]> => {
-  const result = await User.find({ creator: userId });
+  const result = await User.find({
+    creator: new mongoose.Types.ObjectId(userId),
+  });
   return result;
 };
 
@@ -49,7 +52,7 @@ const updateUser = async (
   const creator = findUser.creator;
   if (
     creator &&
-    creator.toString() !== userId &&
+    creator._id.toString() !== userId &&
     findUser._id.toString() !== userId
   ) {
     throw new ApiError(

@@ -1,4 +1,4 @@
-import { SortOrder } from 'mongoose';
+import mongoose, { SortOrder } from 'mongoose';
 import { paginationHelpers } from '../../../helpers/paginationHelpers';
 import { IGenericResponse, IPaginationOptions } from '../../../types';
 import { IGroup, IGroupFilters } from './group.interface';
@@ -22,13 +22,21 @@ const getAllGroups = async (): Promise<IGroup[]> => {
 
 const getAllMyGroups = async (
   filters: IGroupFilters,
-  paginationOptions: IPaginationOptions
+  paginationOptions: IPaginationOptions,
+  userId: string
 ): Promise<IGenericResponse<IGroup[]>> => {
   const { searchTerm, ...filtersData } = filters;
   const { page, limit, skip, sortBy, sortOrder } =
     paginationHelpers.calculatePagination(paginationOptions);
 
   const andConditions = [];
+
+  andConditions.push({
+    $or: [
+      { creator: new mongoose.Types.ObjectId(userId) },
+      { members: { $in: [new mongoose.Types.ObjectId(userId)] } },
+    ],
+  });
 
   if (searchTerm) {
     andConditions.push({
@@ -56,10 +64,6 @@ const getAllMyGroups = async (
       })),
     });
   }
-
-  andConditions.push({
-    members: { $in: [filtersData.userId] },
-  });
 
   const sortConditions: { [key: string]: SortOrder } = {};
 

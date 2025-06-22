@@ -85,7 +85,6 @@ const getSingleTask = catchAsync(async (req: Request, res: Response) => {
 
 const updateTask = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const userId = req.user.userId;
   const file = req.file;
   const attachment = file
     ? {
@@ -100,22 +99,10 @@ const updateTask = catchAsync(async (req: Request, res: Response) => {
     ...req.body,
     attachment,
   };
-  const result = await TaskService.updateTask(id, taskPayload, userId);
+  const result = await TaskService.updateTask(id, taskPayload);
   sendResponse<ITask>(res, {
     success: true,
     message: 'Task updated successfully',
-    data: result,
-    statusCode: httpStatus.OK,
-  });
-});
-
-const updateTaskStatus = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const payload = req.body;
-  const result = await TaskService.updateTaskStatus(id, payload);
-  sendResponse<ITask>(res, {
-    success: true,
-    message: 'Task status updated successfully',
     data: result,
     statusCode: httpStatus.OK,
   });
@@ -139,5 +126,4 @@ export const TaskController = {
   getSingleTask,
   updateTask,
   deleteTask,
-  updateTaskStatus,
 };

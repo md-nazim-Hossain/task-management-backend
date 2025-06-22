@@ -42,11 +42,16 @@ const getAllMyGroups = catchAsync(async (req: Request, res: Response) => {
     req.query,
     paginationFields
   );
-  const result = await GroupService.getAllMyGroups(filters, paginationOptions);
-  sendResponse<IGenericResponse<IGroup[]>>(res, {
+  const result = await GroupService.getAllMyGroups(
+    filters,
+    paginationOptions,
+    req.user.userId
+  );
+  sendResponse<IGroup[]>(res, {
     success: true,
     message: 'Groups retrieved successfully',
-    data: result,
+    data: result.data,
+    meta: result.meta,
     statusCode: httpStatus.OK,
   });
 });
