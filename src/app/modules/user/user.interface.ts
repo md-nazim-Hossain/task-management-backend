@@ -10,7 +10,7 @@ export type IUser = {
   passwordChangeAt?: Date;
   profileImage?: string;
   password: string;
-  creator: Types.ObjectId;
+  creator?: Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
 };

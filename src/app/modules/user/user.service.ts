@@ -46,7 +46,12 @@ const updateUser = async (
 ): Promise<IUser | null> => {
   const findUser = await User.findById(id);
   if (!findUser) throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
-  if (findUser.creator.toString() !== userId) {
+  const creator = findUser.creator;
+  if (
+    creator &&
+    creator.toString() !== userId &&
+    findUser._id.toString() !== userId
+  ) {
     throw new ApiError(
       httpStatus.FORBIDDEN,
       'you are not authorized to update this user'
@@ -69,7 +74,8 @@ const deleteUser = async (
 ): Promise<IUser | null> => {
   const findUser = await User.findById(id);
   if (!findUser) throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
-  if (findUser.creator.toString() !== userId) {
+  const creator = findUser.creator;
+  if (creator && creator.toString() !== userId) {
     throw new ApiError(
       httpStatus.FORBIDDEN,
       'you are not authorized to delete this user'

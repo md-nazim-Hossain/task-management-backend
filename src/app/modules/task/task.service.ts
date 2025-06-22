@@ -10,6 +10,7 @@ import { TaskComment } from '../taskComment/task-comment.model';
 import { Notification } from '../notification/notification.model';
 import { IGroup } from '../group/group.interface';
 import { logger } from '../../../utils/logger';
+import { notifyUsers } from '../../../helpers/notificationHelper';
 
 const createTask = async (payload: ITask): Promise<ITask> => {
   if (
@@ -305,27 +306,49 @@ const updateTask = async (
     );
   }
 
-  const uniqueRecipients = [...new Set(recipients)];
+  await notifyUsers({
+    message: `Task "${task.title}" has been updated.`,
+    userIds: recipients,
+    taskId: task._id.toString(),
+    senderId: task.creator._id.toString(),
+    type: 'task-updated',
+  });
 
-  await Promise.all(
-    uniqueRecipients.map(async userId => {
-      const message = `Task "${task.title}" has been updated.`;
-      const storeData = {
-        receiver: userId,
-        message,
-        notificationType: 'task_updated',
-        task: new mongoose.Types.ObjectId(task._id),
-        sender: new mongoose.Types.ObjectId(updaterId),
-      };
-      const notification = await Notification.create(storeData);
-      // Emit via socket
-      try {
-        globalThis.io.to(userId).emit('task_updated', notification);
-      } catch (error) {
-        logger.error(error);
-      }
-    })
-  );
+  return task;
+};
+
+const updateTaskStatus = async (
+  id: string,
+  payload: Partial<ITask>
+): Promise<ITask | null> => {
+  const task = await Task.findOneAndUpdate({ _id: id }, payload, {
+    new: true,
+    runValidators: true,
+  })
+    .populate('creator')
+    .populate('assignedTo');
+
+  if (!task) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Task not found');
+  }
+
+  const recipients: string[] = [];
+
+  if (task.creator?._id) recipients.push(task.creator._id.toString());
+  if ((task.assignedTo as IGroup)?.members?.length) {
+    recipients.push(
+      ...(task.assignedTo as IGroup).members.map((m: any) => m._id.toString())
+    );
+  }
+
+  await notifyUsers({
+    message: `Task "${task.title}" status has been updated. New status: ${task.status} and old status: ${payload.status}`,
+    userIds: recipients,
+    taskId: task._id.toString(),
+    senderId: task.creator._id.toString(),
+    type: 'task-status-updated',
+  });
+
   return task;
 };
 
@@ -362,4 +385,5 @@ export const TaskService = {
   getSingleTask,
   updateTask,
   deleteTask,
+  updateTaskStatus,
 };

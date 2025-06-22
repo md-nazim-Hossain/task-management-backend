@@ -38,7 +38,7 @@ const userSchema = new Schema<IUser, Record<string, unknown>, IUserMethods>(
     creator: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+      required: false,
     },
   },
   {

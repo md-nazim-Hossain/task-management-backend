@@ -109,9 +109,21 @@ const updateTask = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const updateTaskStatus = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const payload = req.body;
+  const result = await TaskService.updateTaskStatus(id, payload);
+  sendResponse<ITask>(res, {
+    success: true,
+    message: 'Task status updated successfully',
+    data: result,
+    statusCode: httpStatus.OK,
+  });
+});
+
 const deleteTask = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await TaskService.deleteTask(id);
+  const result = await TaskService.deleteTask(id, req.user.userId);
   sendResponse<ITask>(res, {
     success: true,
     message: 'Task deleted successfully',
@@ -127,4 +139,5 @@ export const TaskController = {
   getSingleTask,
   updateTask,
   deleteTask,
+  updateTaskStatus,
 };
