@@ -9,6 +9,7 @@ import { deleteFile } from '../../../utils/deleteFile';
 import { TaskComment } from '../taskComment/task-comment.model';
 import { Notification } from '../notification/notification.model';
 import { IGroup } from '../group/group.interface';
+import { logger } from '../../../utils/logger';
 
 const createTask = async (payload: ITask): Promise<ITask> => {
   if (
@@ -310,7 +311,11 @@ const updateTask = async (
       };
       const notification = await Notification.create(storeData);
       // Emit via socket
-      global.io.to(userId).emit('task_updated', notification);
+      try {
+        globalThis.io.to(userId).emit('task_updated', notification);
+      } catch (error) {
+        logger.error(error);
+      }
     })
   );
   return task;

@@ -48,6 +48,10 @@ const taskSchema = new Schema<ITask, Record<string, unknown>>(
       mimeType: { type: String, required: false },
       size: { type: Number, required: false },
     },
+    dueDateNotified: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

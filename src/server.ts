@@ -5,6 +5,7 @@ import { logger, errorLogger } from './utils/logger';
 import app from './app';
 import { Server as SocketIOServer } from 'socket.io';
 import { socketHandler } from './utils/socket';
+import { startDueDateNotifier } from './jobs/taskDueNotifier';
 
 let server: ReturnType<typeof createServer>;
 
@@ -31,6 +32,7 @@ async function main() {
 
     server.listen(config.port, () => {
       logger.info(`🚀 Server listening on port ${config.port}`);
+      startDueDateNotifier();
     });
   } catch (error: any) {
     errorLogger.error('❌ Database connection failed:', error.message || error);

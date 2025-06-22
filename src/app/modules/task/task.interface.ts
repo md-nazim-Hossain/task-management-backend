@@ -14,6 +14,7 @@ export type ITask = {
   category: Types.ObjectId | string;
   priority?: ENUM_TASK_PRIORITY;
   attachment?: ITaskAttachment;
+  dueDateNotified: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 };
