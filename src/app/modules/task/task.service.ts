@@ -268,7 +268,8 @@ const getSingleTask = async (id: string): Promise<ITask | null> => {
 
 const updateTask = async (
   id: string,
-  payload: Partial<ITask>
+  payload: Partial<ITask>,
+  updaterId: string
 ): Promise<ITask | null> => {
   const findTask = await Task.findById(id);
   if (!findTask) throw new ApiError(httpStatus.NOT_FOUND, 'Task not found');
@@ -307,7 +308,7 @@ const updateTask = async (
         message,
         notificationType: 'task_updated',
         task: new mongoose.Types.ObjectId(task._id),
-        sender: new mongoose.Types.ObjectId(task.creator?._id),
+        sender: new mongoose.Types.ObjectId(updaterId),
       };
       const notification = await Notification.create(storeData);
       // Emit via socket

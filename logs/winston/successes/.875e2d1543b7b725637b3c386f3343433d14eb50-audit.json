@@ -99,6 +99,16 @@
             "date": 1750449613613,
             "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/successes/phu-2025-06-21-02-success.log",
             "hash": "96d690bf1911bf4711da49821f17da1800fad2f1c081388e6453e8bce81ee60e"
+        },
+        {
+            "date": 1750607790769,
+            "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/successes/phu-2025-06-22-21-success.log",
+            "hash": "bec7ef85244869f0c72931963c3aca6a96e6c4e13af0637115b2a5a543958186"
+        },
+        {
+            "date": 1750609368148,
+            "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/successes/phu-2025-06-22-22-success.log",
+            "hash": "10500a819c399c822c2bec72b3981e905e8933b005bf9e1ebb031afb6a05aecb"
         }
     ],
     "hashType": "sha256"

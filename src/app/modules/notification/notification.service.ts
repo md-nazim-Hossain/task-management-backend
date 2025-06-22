@@ -1,7 +1,9 @@
 import { Notification } from './notification.model';
 
 const getAllMyNotifications = async (id: string) => {
-  const result = await Notification.find({ receiver: id });
+  const result = await Notification.find({ receiver: id }).sort({
+    createdAt: -1,
+  });
   const unreadCount = await Notification.countDocuments({
     receiver: id,
     isRead: false,

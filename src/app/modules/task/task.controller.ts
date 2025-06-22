@@ -10,8 +10,7 @@ import { IPaginationOptions } from '../../../types';
 import { paginationFields } from '../../../utils/paginationConstant';
 
 const createTask = catchAsync(async (req: Request, res: Response) => {
-  const user = (req as Request & { user: { userId: string; role: string } })
-    .user;
+  const user = req.user;
   const file = req.file;
   const attachment = file
     ? {
@@ -53,9 +52,7 @@ const getAllTasks = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllUserTasks = catchAsync(async (req: Request, res: Response) => {
-  const user = (req as Request & { user: { userId: string; role: string } })
-    .user;
-
+  const user = req.user;
   const filters = pick(req.query, TaskConstant.taskFiltersFields);
   const paginationOptions: IPaginationOptions = pick(
     req.query,
@@ -88,6 +85,7 @@ const getSingleTask = catchAsync(async (req: Request, res: Response) => {
 
 const updateTask = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
+  const userId = req.user.userId;
   const file = req.file;
   const attachment = file
     ? {
@@ -102,7 +100,7 @@ const updateTask = catchAsync(async (req: Request, res: Response) => {
     ...req.body,
     attachment,
   };
-  const result = await TaskService.updateTask(id, taskPayload);
+  const result = await TaskService.updateTask(id, taskPayload, userId);
   sendResponse<ITask>(res, {
     success: true,
     message: 'Task updated successfully',

@@ -41,7 +41,7 @@ export const startDueDateNotifier = () => {
           task: new mongoose.Types.ObjectId(task._id),
           sender: new mongoose.Types.ObjectId(task.creator._id),
         });
-        globalThis.io.to(userId).emit('notification:new', notification);
+        globalThis.io.to(userId).emit('task_updated', notification);
       }
 
       task.dueDateNotified = true;

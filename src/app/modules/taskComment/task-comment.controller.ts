@@ -7,8 +7,7 @@ import httpStatus from 'http-status';
 import mongoose from 'mongoose';
 
 const createTaskComment = catchAsync(async (req: Request, res: Response) => {
-  const user = (req as Request & { user: { userId: string; role: string } })
-    .user;
+  const user = req.user;
   const result = await TaskCommentService.createTaskComment({
     ...req.body,
     author: new mongoose.Types.ObjectId(user.userId),

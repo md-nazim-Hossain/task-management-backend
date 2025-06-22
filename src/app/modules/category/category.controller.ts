@@ -6,8 +6,7 @@ import { CategoryService } from './category.service';
 import httpStatus from 'http-status';
 
 const createCategory = catchAsync(async (req: Request, res: Response) => {
-  const user = (req as Request & { user: { userId: string; role: string } })
-    .user;
+  const user = req.user;
   const result = await CategoryService.createCategory({
     ...req.body,
     creator: user.userId,

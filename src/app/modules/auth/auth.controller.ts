@@ -44,9 +44,7 @@ const refreshToken = catchAsync(async (req: Request, res: Response) => {
 });
 
 const changePassword = catchAsync(async (req: Request, res: Response) => {
-  const user = (
-    req as Request & { user: { userId: string; role: string; email: string } }
-  ).user;
+  const user = req.user;
   const { ...changePasswordData } = req.body;
   await AuthService.changePassword(user, changePasswordData);
 
@@ -59,9 +57,7 @@ const changePassword = catchAsync(async (req: Request, res: Response) => {
 });
 
 const logOut = catchAsync(async (req: Request, res: Response) => {
-  const user = (req as Request & { user: { userId: string; role: string } })
-    .user;
-  console.log(user);
+  const user = req.user;
   const result = await AuthService.logOut(user?.userId);
   const options = {
     expires: new Date(0),
@@ -77,8 +73,7 @@ const logOut = catchAsync(async (req: Request, res: Response) => {
 });
 
 const dashboardData = catchAsync(async (req: Request, res: Response) => {
-  const user = (req as Request & { user: { userId: string; role: string } })
-    .user;
+  const user = req.user;
   const result = await AuthService.dashboardData(user?.userId);
   sendResponse(res, {
     success: true,

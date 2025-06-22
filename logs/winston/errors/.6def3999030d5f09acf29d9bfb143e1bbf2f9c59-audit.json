@@ -99,6 +99,16 @@
             "date": 1750449613615,
             "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/errors/phu-2025-06-21-02-error.log",
             "hash": "8a2e05b33649a0daa5cfbf788b8bb20562853fa51d87d41143a375dd7b70ee52"
+        },
+        {
+            "date": 1750607790773,
+            "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/errors/phu-2025-06-22-21-error.log",
+            "hash": "b61dda42828be218fecdbf0a02b09061f145d68fcb676dc00258adce2d518984"
+        },
+        {
+            "date": 1750609368151,
+            "name": "/home/nazim/workstations/Tasks/tasks-management-backend/logs/winston/errors/phu-2025-06-22-22-error.log",
+            "hash": "c651c2a24d63becb206d475924cca98cd9bfd3451daadb23c8b8a4dac6789dc8"
         }
     ],
     "hashType": "sha256"

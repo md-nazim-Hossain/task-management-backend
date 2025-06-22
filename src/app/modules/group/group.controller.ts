@@ -10,8 +10,7 @@ import { paginationFields } from '../../../utils/paginationConstant';
 import { GroupConstant } from './group.constant';
 
 const createGroup = catchAsync(async (req: Request, res: Response) => {
-  const user = (req as Request & { user: { userId: string; role: string } })
-    .user;
+  const user = req.user;
   const file = req.file;
   const image = file ? `/uploads/${file.filename}` : undefined;
   const result = await GroupService.createGroup({
