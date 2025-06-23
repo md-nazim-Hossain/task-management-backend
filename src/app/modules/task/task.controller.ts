@@ -35,21 +35,26 @@ const createTask = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const getAllTasks = catchAsync(async (req: Request, res: Response) => {
-  const filters = pick(req.query, TaskConstant.taskFiltersFields);
-  const paginationOptions: IPaginationOptions = pick(
-    req.query,
-    paginationFields
-  );
-  const result = await TaskService.getAllTasks(filters, paginationOptions);
-  sendResponse<ITask[]>(res, {
-    success: true,
-    message: 'Tasks retrieved successfully',
-    data: result.data,
-    meta: result.meta,
-    statusCode: httpStatus.OK,
-  });
-});
+const getAllTasksByCategory = catchAsync(
+  async (req: Request, res: Response) => {
+    const filters = pick(req.query, TaskConstant.taskFiltersFields);
+    const paginationOptions: IPaginationOptions = pick(
+      req.query,
+      paginationFields
+    );
+    const result = await TaskService.getAllTasksByCategory(
+      filters,
+      paginationOptions
+    );
+    sendResponse<ITask[]>(res, {
+      success: true,
+      message: 'Tasks retrieved successfully',
+      data: result.data,
+      meta: result.meta,
+      statusCode: httpStatus.OK,
+    });
+  }
+);
 
 const getAllUserTasks = catchAsync(async (req: Request, res: Response) => {
   const user = req.user;
@@ -122,7 +127,7 @@ const deleteTask = catchAsync(async (req: Request, res: Response) => {
 export const TaskController = {
   createTask,
   getAllUserTasks,
-  getAllTasks,
+  getAllTasksByCategory,
   getSingleTask,
   updateTask,
   deleteTask,

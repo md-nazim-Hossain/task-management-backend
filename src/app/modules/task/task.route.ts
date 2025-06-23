@@ -17,7 +17,11 @@ router.post(
 
 router.get('/my-tasks', auth(), TaskController.getAllUserTasks);
 
-router.get('/all-tasks', auth(), TaskController.getAllTasks);
+router.get(
+  '/get-task-by-category',
+  auth(),
+  TaskController.getAllTasksByCategory
+);
 
 router.get('/:id', auth(), TaskController.getSingleTask);
 

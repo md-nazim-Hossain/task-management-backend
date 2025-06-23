@@ -4,6 +4,10 @@ import { catchAsync } from '../../../utils/catchAsync';
 import { ICategory } from './category.interface';
 import { CategoryService } from './category.service';
 import httpStatus from 'http-status';
+import pick from '../../../utils/pick';
+import { CategoryConstant } from './category.constant';
+import { IPaginationOptions } from '../../../types';
+import { paginationFields } from '../../../utils/paginationConstant';
 
 const createCategory = catchAsync(async (req: Request, res: Response) => {
   const user = req.user;
@@ -20,12 +24,21 @@ const createCategory = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllCategories = catchAsync(async (req: Request, res: Response) => {
-  const slug = req.query.slug as string;
-  const result = await CategoryService.getAllCategories(slug);
+  const filters = pick(req.query, CategoryConstant.categoryFiltersFields);
+  const paginationOptions: IPaginationOptions = pick(
+    req.query,
+    paginationFields
+  );
+
+  const result = await CategoryService.getAllCategories(
+    filters,
+    paginationOptions
+  );
   sendResponse<ICategory[]>(res, {
     success: true,
     message: 'Categories retrieved successfully',
-    data: result,
+    data: result.data,
+    meta: result.meta,
     statusCode: httpStatus.OK,
   });
 });

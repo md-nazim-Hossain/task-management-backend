@@ -1,6 +1,8 @@
+import { paginationHelpers } from '../../../helpers/paginationHelpers';
+import { IGenericResponse, IPaginationOptions } from '../../../types';
 import ApiError from '../../../utils/ApiError';
 import { generateUniqueSlug } from '../../../utils/slug-generator';
-import { ICategory } from './category.interface';
+import { ICategory, ICategoryFilters } from './category.interface';
 import { Category } from './category.model';
 import httpStatus from 'http-status';
 
@@ -11,9 +13,42 @@ const createCategory = async (payload: ICategory): Promise<ICategory> => {
   return result;
 };
 
-const getAllCategories = async (slug?: string): Promise<any[]> => {
+const getAllCategories = async (
+  filters: ICategoryFilters,
+  paginationOptions: IPaginationOptions
+): Promise<IGenericResponse<ICategory[]>> => {
+  const { searchTerm, status, creator, category } = filters;
+  const { page, limit } =
+    paginationHelpers.calculatePagination(paginationOptions);
+
   const pipeline = [];
-  if (slug) pipeline.push({ $match: { slug } });
+  if (searchTerm) {
+    pipeline.push({
+      $match: {
+        $or: [
+          { title: { $regex: searchTerm, $options: 'i' } },
+          { description: { $regex: searchTerm, $options: 'i' } },
+        ],
+      },
+    });
+  }
+
+  if (creator) {
+    pipeline.push({
+      $match: {
+        creator: creator,
+      },
+    });
+  }
+
+  if (category) {
+    pipeline.push({
+      $match: {
+        _id: category,
+      },
+    });
+  }
+
   pipeline.push(
     {
       $lookup: {
@@ -199,8 +234,30 @@ const getAllCategories = async (slug?: string): Promise<any[]> => {
       },
     }
   );
+
+  if (status) {
+    const statusArray = Array.isArray(status) ? status : [status];
+    pipeline.push({
+      $match: {
+        tasks: {
+          $elemMatch: {
+            status: { $in: statusArray },
+          },
+        },
+      },
+    });
+  }
+
   const result = await Category.aggregate(pipeline);
-  return result;
+  const total = await Category.countDocuments(pipeline);
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
 };
 
 const updateCategory = async (

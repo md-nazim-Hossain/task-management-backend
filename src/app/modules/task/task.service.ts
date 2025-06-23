@@ -23,33 +23,37 @@ const createTask = async (payload: ITask): Promise<ITask> => {
   return result;
 };
 
-const getAllTasks = async (
+const getAllTasksByCategory = async (
   filters: ITaskFilters,
   paginationOptions: IPaginationOptions
-): Promise<IGenericResponse<ITask[]>> => {
-  const { searchTerm, ...filtersData } = filters;
+): Promise<IGenericResponse<any[]>> => {
+  const { searchTerm, status, priority, slug, ...filtersData } = filters;
   const { page, limit, skip, sortBy, sortOrder } =
     paginationHelpers.calculatePagination(paginationOptions);
 
-  const andConditions = [];
+  const andConditions: any[] = [];
 
   if (searchTerm) {
     andConditions.push({
       $or: [
-        {
-          title: {
-            $regex: searchTerm,
-            $options: 'i',
-          },
-        },
-        {
-          description: {
-            $regex: searchTerm,
-            $options: 'i',
-          },
-        },
+        { title: { $regex: searchTerm, $options: 'i' } },
+        { description: { $regex: searchTerm, $options: 'i' } },
       ],
     });
+  }
+
+  if (slug) {
+    andConditions.push({ 'category.slug': slug });
+  }
+
+  if (status) {
+    const statusArray = Array.isArray(status) ? status : [status];
+    andConditions.push({ status: { $in: statusArray } });
+  }
+
+  if (priority) {
+    const priorityArray = Array.isArray(priority) ? priority : [priority];
+    andConditions.push({ priority: { $in: priorityArray } });
   }
 
   if (Object.keys(filtersData).length) {
@@ -60,21 +64,144 @@ const getAllTasks = async (
     });
   }
 
-  const sortConditions: { [key: string]: SortOrder } = {};
-
-  if (sortBy && sortOrder) {
-    sortConditions[sortBy] = sortOrder;
-  }
-
-  const whereConditions =
+  const matchCondition =
     andConditions.length > 0 ? { $and: andConditions } : {};
 
-  const result = await Task.find(whereConditions)
-    .sort(sortConditions)
-    .skip(skip)
-    .limit(limit);
+  const sortStage: Record<string, 1 | -1> =
+    sortBy && sortOrder
+      ? { [sortBy]: sortOrder === 'asc' ? 1 : -1 }
+      : { createdAt: -1 };
 
-  const total = await Task.countDocuments(whereConditions);
+  const result = await Task.aggregate([
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'category',
+        foreignField: '_id',
+        as: 'category',
+        pipeline: [
+          {
+            $project: {
+              title: 1,
+              _id: 1,
+              slug: 1,
+              description: 1,
+              status: 1,
+            },
+          },
+        ],
+      },
+    },
+    { $match: matchCondition },
+    {
+      $lookup: {
+        from: 'taskcomments',
+        localField: '_id',
+        foreignField: 'task',
+        as: 'comments',
+      },
+    },
+    {
+      $addFields: {
+        commentsCount: { $size: '$comments' },
+      },
+    },
+    {
+      $lookup: {
+        from: 'groups',
+        localField: 'assignedTo',
+        foreignField: '_id',
+        as: 'assignedTo',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'members',
+              foreignField: '_id',
+              as: 'members',
+              pipeline: [
+                {
+                  $project: {
+                    email: 1,
+                    fullName: 1,
+                    profileImage: 1,
+                    _id: 1,
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $project: {
+              title: 1,
+              _id: 1,
+              members: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $unwind: {
+        path: '$assignedTo',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'creator',
+        foreignField: '_id',
+        as: 'creator',
+        pipeline: [
+          {
+            $project: {
+              email: 1,
+              fullName: 1,
+              profileImage: 1,
+              _id: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $unwind: {
+        path: '$creator',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    {
+      $unwind: {
+        path: '$category',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        title: 1,
+        description: 1,
+        status: 1,
+        priority: 1,
+        dueDate: 1,
+        commentsCount: 1,
+        creator: 1,
+        assignedTo: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        category: 1,
+        attachment: 1,
+        members: 1,
+      },
+    },
+    { $sort: sortStage },
+    { $skip: skip },
+    { $limit: limit },
+  ]);
+
+  const total = await Task.countDocuments(matchCondition);
+
   return {
     meta: {
       page,
@@ -90,7 +217,7 @@ const getAllUserTasks = async (
   filters: ITaskFilters,
   paginationOptions: IPaginationOptions
 ): Promise<IGenericResponse<any[]>> => {
-  const { searchTerm, ...filtersData } = filters;
+  const { searchTerm, status, priority, ...filtersData } = filters;
   const { page, limit, skip, sortBy, sortOrder } =
     paginationHelpers.calculatePagination(paginationOptions);
 
@@ -103,6 +230,16 @@ const getAllUserTasks = async (
         { description: { $regex: searchTerm, $options: 'i' } },
       ],
     });
+  }
+
+  if (status) {
+    const statusArray = Array.isArray(status) ? status : [status];
+    andConditions.push({ status: { $in: statusArray } });
+  }
+
+  if (priority) {
+    const priorityArray = Array.isArray(priority) ? priority : [priority];
+    andConditions.push({ priority: { $in: priorityArray } });
   }
 
   if (Object.keys(filtersData).length) {
@@ -338,7 +475,7 @@ const deleteTask = async (
 
 export const TaskService = {
   createTask,
-  getAllTasks,
+  getAllTasksByCategory,
   getAllUserTasks,
   getSingleTask,
   updateTask,

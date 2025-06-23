@@ -27,6 +27,7 @@ export type ITaskFilters = {
   dueDate?: Date;
   priority?: string;
   assignedTo?: string;
+  slug?: string;
 };
 
 export type ITaskAttachment = {

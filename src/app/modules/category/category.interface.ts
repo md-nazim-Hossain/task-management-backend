@@ -17,4 +17,5 @@ export type ICategoryFilters = {
   status?: string;
   slug?: string;
   creator?: string;
+  category?: string;
 };

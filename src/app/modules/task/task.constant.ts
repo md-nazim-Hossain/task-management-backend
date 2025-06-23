@@ -7,6 +7,7 @@ const taskFiltersFields = [
   'status',
   'assignedTo',
   'creator',
+  'slug',
 ];
 
 export const TaskConstant = {
