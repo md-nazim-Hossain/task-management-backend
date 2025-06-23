@@ -11,7 +11,7 @@ export const startDueDateNotifier = () => {
     const now = new Date();
     const inOneHour = new Date(now.getTime() + 60 * 60 * 1000);
     console.log('Running due date notifier');
-
+    // await Notification.deleteMany();
     const dueTasks = await Task.find({
       status: ENUM_TASK_STATUS.COMPLETED,
       dueDate: { $gte: now, $lte: inOneHour },
